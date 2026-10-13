@@ -1,5 +1,7 @@
+
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 import { connection } from "next/server";
 import { prisma } from "@/lib/prisma";
 
@@ -17,7 +19,43 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function CritiquesPage() {
+function CritiquesLoading() {
+  return (
+    <main className="min-h-screen bg-[#080b14] px-5 py-16 text-white sm:px-8">
+      <div className="mx-auto max-w-7xl animate-pulse space-y-8">
+        <div className="h-4 w-48 rounded bg-white/10" />
+        <div className="h-12 max-w-xl rounded bg-white/10" />
+        <div className="h-5 max-w-2xl rounded bg-white/10" />
+
+        <div className="grid gap-6 pt-8 sm:grid-cols-2 lg:grid-cols-3">
+          {[1, 2, 3, 4, 5, 6].map((item) => (
+            <div
+              key={item}
+              className="overflow-hidden rounded-2xl border border-white/10"
+            >
+              <div className="aspect-video bg-white/10" />
+              <div className="space-y-3 p-5">
+                <div className="h-4 w-1/3 rounded bg-white/10" />
+                <div className="h-6 rounded bg-white/10" />
+                <div className="h-4 rounded bg-white/10" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </main>
+  );
+}
+
+export default function CritiquesPage() {
+  return (
+    <Suspense fallback={<CritiquesLoading />}>
+      <CritiquesContent />
+    </Suspense>
+  );
+}
+
+async function CritiquesContent() {
   await connection();
 
   const now = new Date();
@@ -27,7 +65,10 @@ export default async function CritiquesPage() {
       status: "PUBLISHED",
       publishedAt: { lte: now },
     },
-    orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
+    orderBy: [
+      { publishedAt: "desc" },
+      { createdAt: "desc" },
+    ],
     take: 12,
     select: {
       id: true,
@@ -71,7 +112,9 @@ export default async function CritiquesPage() {
 
           <h1 className="mt-4 max-w-3xl text-4xl font-black tracking-tight sm:text-5xl md:text-6xl">
             Les films méritent
-            <span className="block text-rose-400">un vrai regard.</span>
+            <span className="block text-rose-400">
+              un vrai regard.
+            </span>
           </h1>
 
           <p className="mt-6 max-w-2xl text-base leading-8 text-slate-300 sm:text-lg">
@@ -105,7 +148,8 @@ export default async function CritiquesPage() {
           </div>
 
           <span className="text-sm text-slate-400">
-            {reviews.length} publication{reviews.length > 1 ? "s" : ""}
+            {reviews.length} publication
+            {reviews.length > 1 ? "s" : ""}
             {reviews.length === 12 ? " récentes" : ""}
           </span>
         </div>
@@ -115,13 +159,16 @@ export default async function CritiquesPage() {
             <div className="text-5xl" aria-hidden="true">
               🎬
             </div>
+
             <h2 className="mt-5 text-2xl font-bold">
               Le rideau se lève bientôt
             </h2>
+
             <p className="mx-auto mt-3 max-w-lg leading-7 text-slate-400">
               Nos premières critiques seront bientôt disponibles. Reviens
               découvrir nos analyses et nos avis sur les films et les séries.
             </p>
+
             <Link href="/films" className="btn btn-error mt-7 text-white">
               Explorer les films
             </Link>
@@ -146,7 +193,9 @@ export default async function CritiquesPage() {
                       loading="lazy"
                       className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                     />
+
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-transparent" />
+
                     {review.rating != null && (
                       <span className="badge absolute bottom-3 right-3 border-amber-400/30 bg-slate-950/90 text-amber-300">
                         ★ {review.rating}/10
@@ -154,12 +203,13 @@ export default async function CritiquesPage() {
                     )}
                   </Link>
                 ) : (
-                  <div className="flex aspect-[16/9] items-center justify-center bg-gradient-to-br from-rose-950/70 via-slate-900 to-violet-950/50">
+                  <div className="relative flex aspect-[16/9] items-center justify-center bg-gradient-to-br from-rose-950/70 via-slate-900 to-violet-950/50">
                     <span className="text-5xl" aria-hidden="true">
                       🎞️
                     </span>
+
                     {review.rating != null && (
-                      <span className="badge absolute mt-24 border-amber-400/30 bg-slate-950/90 text-amber-300">
+                      <span className="badge absolute bottom-3 right-3 border-amber-400/30 bg-slate-950/90 text-amber-300">
                         ★ {review.rating}/10
                       </span>
                     )}
@@ -187,9 +237,11 @@ export default async function CritiquesPage() {
                     </Link>
                   </h3>
 
-                  <p className="mt-3 line-clamp-4 flex-1 text-sm leading-7 text-slate-400">
-                    {review.excerpt}
-                  </p>
+                  {review.excerpt && (
+                    <p className="mt-3 line-clamp-4 flex-1 text-sm leading-7 text-slate-400">
+                      {review.excerpt}
+                    </p>
+                  )}
 
                   <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-4">
                     <div>
@@ -232,13 +284,16 @@ export default async function CritiquesPage() {
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-rose-400">
             Prolonge l'expérience
           </p>
+
           <h2 className="mt-3 text-2xl font-black">
             Une histoire à découvrir ?
           </h2>
+
           <p className="mt-3 max-w-xl leading-7 text-slate-400">
             Parcours notre catalogue pour trouver ton prochain film ou ta
             prochaine série.
           </p>
+
           <Link href="/films" className="btn btn-error mt-6 text-white">
             Découvrir le catalogue →
           </Link>

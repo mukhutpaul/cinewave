@@ -1,8 +1,12 @@
 
 import Link from "next/link";
+import { connection } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 export default async function HomeContent() {
+  // Évite le prérendu de données dépendant de l'heure actuelle.
+  await connection();
+
   const now = new Date();
 
   const publicationFilter = {
@@ -175,7 +179,9 @@ export default async function HomeContent() {
                 {featured.releaseYear ?? "Année inconnue"}
                 {" · "}
                 {featured.type === "SERIES" ? "Série" : "Film"}
-                {featured.duration ? ` · ${featured.duration} min` : ""}
+                {"duration" in featured && featured.duration
+                  ? ` · ${featured.duration} min`
+                  : ""}
               </p>
               <p className="mt-5 whitespace-pre-line leading-7 text-slate-300">
                 {featured.synopsis}

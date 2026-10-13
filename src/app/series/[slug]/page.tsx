@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 import { connection } from "next/server";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
@@ -11,7 +12,6 @@ type Props = {
 export async function generateMetadata({
   params,
 }: Props): Promise<Metadata> {
-  await connection();
   const { slug } = await params;
   const now = new Date();
 
@@ -31,23 +31,67 @@ export async function generateMetadata({
     },
   });
 
-  if (!series) return { title: "Série introuvable" };
+  if (!series) {
+    return {
+      title: "Série introuvable | Histyra",
+      robots: { index: false, follow: false },
+    };
+  }
+
+  const title = series.seoTitle || series.title;
+  const description = (
+    series.seoDescription ||
+    series.synopsis ||
+    `Découvrez la série ${series.title} sur Histyra.`
+  ).slice(0, 160);
 
   return {
-    title: series.seoTitle || series.title,
-    description:
-      series.seoDescription || series.synopsis.slice(0, 160),
+    title,
+    description,
     openGraph: {
-      title: series.seoTitle || series.title,
-      description:
-        series.seoDescription || series.synopsis.slice(0, 160),
+      title,
+      description,
       type: "article",
-      images: series.posterUrl ? [series.posterUrl] : [],
+      images: series.posterUrl ? [{ url: series.posterUrl }] : [],
     },
   };
 }
 
-export default async function SeriesDetailPage({ params }: Props) {
+function SeriesLoading() {
+  return (
+    <main className="mx-auto min-h-screen max-w-7xl px-5 py-10 md:px-8">
+      <div className="mb-8 h-5 w-48 animate-pulse rounded bg-slate-800" />
+
+      <section className="grid gap-8 rounded-3xl border border-white/10 bg-slate-900 p-6 sm:p-10 md:grid-cols-[280px_1fr] md:p-12">
+        <div className="mx-auto aspect-[2/3] w-full max-w-[280px] animate-pulse rounded-2xl bg-slate-800" />
+
+        <div className="flex flex-col justify-center gap-5">
+          <div className="h-5 w-24 animate-pulse rounded bg-slate-800" />
+          <div className="h-10 w-3/4 animate-pulse rounded bg-slate-800" />
+          <div className="h-4 w-32 animate-pulse rounded bg-slate-800" />
+          <div className="mt-5 h-5 w-28 animate-pulse rounded bg-slate-800" />
+          <div className="h-24 w-full animate-pulse rounded bg-slate-800" />
+        </div>
+      </section>
+
+      <div className="mt-12 h-8 w-64 animate-pulse rounded bg-slate-800" />
+      <div className="mt-6 grid gap-5 md:grid-cols-2">
+        <div className="h-40 animate-pulse rounded-2xl bg-slate-900" />
+        <div className="h-40 animate-pulse rounded-2xl bg-slate-900" />
+      </div>
+    </main>
+  );
+}
+
+export default function SeriesDetailPage({ params }: Props) {
+  return (
+    <Suspense fallback={<SeriesLoading />}>
+      <SeriesDetailContent params={params} />
+    </Suspense>
+  );
+}
+
+async function SeriesDetailContent({ params }: Props) {
   await connection();
 
   const { slug } = await params;
@@ -69,13 +113,21 @@ export default async function SeriesDetailPage({ params }: Props) {
       backdropUrl: true,
       releaseYear: true,
       duration: true,
-      category: { select: { name: true } },
+      category: {
+        select: { name: true },
+      },
       reviews: {
         where: {
           status: "PUBLISHED",
-          publishedAt: { lte: now },
+          OR: [
+            { publishedAt: null },
+            { publishedAt: { lte: now } },
+          ],
         },
-        orderBy: { publishedAt: "desc" },
+        orderBy: [
+          { publishedAt: "desc" },
+          { createdAt: "desc" },
+        ],
         take: 10,
         select: {
           id: true,
@@ -89,14 +141,23 @@ export default async function SeriesDetailPage({ params }: Props) {
     },
   });
 
-  if (!series) notFound();
+  if (!series) {
+    notFound();
+  }
 
   return (
     <main className="mx-auto min-h-screen max-w-7xl px-5 py-10 md:px-8">
-      <nav aria-label="Fil d’Ariane" className="mb-8 text-sm text-slate-400">
-        <Link href="/" className="hover:text-rose-400">Accueil</Link>
+      <nav
+        aria-label="Fil d’Ariane"
+        className="mb-8 text-sm text-slate-400"
+      >
+        <Link href="/" className="hover:text-rose-400">
+          Accueil
+        </Link>
         {" / "}
-        <Link href="/series" className="hover:text-rose-400">Séries</Link>
+        <Link href="/series" className="hover:text-rose-400">
+          Séries
+        </Link>
         {" / "}
         <span className="text-white">{series.title}</span>
       </nav>
@@ -131,6 +192,7 @@ export default async function SeriesDetailPage({ params }: Props) {
           <div className="flex flex-col justify-center">
             <div className="flex flex-wrap gap-2">
               <span className="badge badge-error">Série</span>
+
               {series.category && (
                 <span className="badge badge-outline">
                   {series.category.name}
@@ -144,12 +206,16 @@ export default async function SeriesDetailPage({ params }: Props) {
 
             <div className="mt-4 flex flex-wrap gap-4 text-sm text-slate-400">
               {series.releaseYear && <span>{series.releaseYear}</span>}
-              {series.duration && <span>{series.duration} min par épisode</span>}
+
+              {series.duration != null && (
+                <span>{series.duration} min par épisode</span>
+              )}
             </div>
 
             <h2 className="mt-8 text-xl font-bold">Synopsis</h2>
+
             <p className="mt-3 whitespace-pre-line leading-8 text-slate-300">
-              {series.synopsis}
+              {series.synopsis || "Aucun synopsis disponible pour le moment."}
             </p>
           </div>
         </div>
@@ -171,15 +237,21 @@ export default async function SeriesDetailPage({ params }: Props) {
               >
                 <div className="card-body">
                   <h3 className="card-title">{review.title}</h3>
+
                   {review.rating !== null && (
                     <p className="text-amber-400">
                       Note : {review.rating}/10
                     </p>
                   )}
-                  <p className="leading-7 text-slate-300">{review.excerpt}</p>
+
+                  <p className="leading-7 text-slate-300">
+                    {review.excerpt || "Aucun extrait disponible."}
+                  </p>
+
                   <p className="text-xs text-slate-400">
                     Par {review.authorName}
                   </p>
+
                   <div className="card-actions justify-end">
                     <Link
                       href={`/critiques/${review.slug}`}
@@ -199,7 +271,9 @@ export default async function SeriesDetailPage({ params }: Props) {
         className="my-8 flex min-h-[90px] items-center justify-center border-y border-white/5"
         aria-label="Espace publicitaire"
       >
-        <span className="text-xs text-slate-600">Espace publicitaire</span>
+        <span className="text-xs text-slate-600">
+          Espace publicitaire
+        </span>
       </aside>
 
       <div className="pb-10">

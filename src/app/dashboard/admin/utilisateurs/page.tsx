@@ -1,4 +1,7 @@
+
+import { Suspense } from "react";
 import Link from "next/link";
+import { connection } from "next/server";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
@@ -10,8 +13,17 @@ import { ToastFeedback } from "@/components/ui/ToastFeedback";
 import { UserSearch } from "@/components/dashboard/UserSearch";
 
 const PAGE_PATH = "/dashboard/admin/utilisateurs";
-
 const VALID_ROLES: UserRole[] = ["USER", "EDITOR", "ADMIN"];
+
+type SearchParams = {
+  q?: string;
+  message?: string;
+  erreur?: string;
+};
+
+type PageProps = {
+  searchParams: Promise<SearchParams>;
+};
 
 async function requireAdmin() {
   const session = await auth.api.getSession({
@@ -71,8 +83,11 @@ async function updateUserRole(formData: FormData) {
     redirect(`${PAGE_PATH}?erreur=utilisateur-introuvable`);
   }
 
-  // Empêche de retirer le rôle au dernier administrateur actif.
-  if (!target.banned && target.role === "ADMIN" && role !== "ADMIN") {
+  if (
+    !target.banned &&
+    target.role === "ADMIN" &&
+    role !== "ADMIN"
+  ) {
     const activeAdmins = await prisma.user.count({
       where: {
         role: "ADMIN",
@@ -100,12 +115,15 @@ async function updateUserRole(formData: FormData) {
 async function toggleUserBan(formData: FormData) {
   "use server";
 
-  const admin = await requireAdmin();
+  await requireAdmin();
+
   const userId = String(formData.get("userId") ?? "").trim();
 
   if (!userId) {
     redirect(`${PAGE_PATH}?erreur=donnees-invalides`);
   }
+
+  const admin = await requireAdmin();
 
   if (userId === admin.id) {
     redirect(`${PAGE_PATH}?erreur=modification-propre-compte`);
@@ -124,7 +142,6 @@ async function toggleUserBan(formData: FormData) {
     redirect(`${PAGE_PATH}?erreur=utilisateur-introuvable`);
   }
 
-  // Un administrateur actif ne peut pas bannir le dernier administrateur actif.
   if (!target.banned && target.role === "ADMIN") {
     const activeAdmins = await prisma.user.count({
       where: {
@@ -154,15 +171,38 @@ async function toggleUserBan(formData: FormData) {
   );
 }
 
-type PageProps = {
-  searchParams: Promise<{
-    q?: string;
-    message?: string;
-    erreur?: string;
-  }>;
-};
+function UsersLoading() {
+  return (
+    <main className="min-h-screen bg-[#080b14] px-4 py-8 text-white sm:px-6 lg:px-10">
+      <div className="mx-auto max-w-7xl animate-pulse">
+        <div className="h-4 w-48 rounded bg-white/10" />
+        <div className="mt-8 h-10 w-80 max-w-full rounded bg-white/10" />
+        <div className="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, index) => (
+            <div
+              key={index}
+              className="h-28 rounded-2xl border border-white/10 bg-slate-900/70"
+            />
+          ))}
+        </div>
+        <div className="mt-6 h-24 rounded-2xl border border-white/10 bg-slate-900/70" />
+        <div className="mt-6 h-72 rounded-2xl border border-white/10 bg-slate-900/70" />
+      </div>
+    </main>
+  );
+}
 
-export default async function AdminUsersPage({ searchParams }: PageProps) {
+export default function AdminUsersPage(props: PageProps) {
+  return (
+    <Suspense fallback={<UsersLoading />}>
+      <AdminUsersContent searchParams={props.searchParams} />
+    </Suspense>
+  );
+}
+
+async function AdminUsersContent({ searchParams }: PageProps) {
+  await connection();
+
   await requireAdmin();
 
   const params = await searchParams;
@@ -203,25 +243,24 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
     take: 200,
   });
 
-  const [totalUsers, totalAdmins, totalEditors, bannedUsers, activeAdmins] =
-    await Promise.all([
-      prisma.user.count(),
-      prisma.user.count({
-        where: { role: "ADMIN" },
-      }),
-      prisma.user.count({
-        where: { role: "EDITOR" },
-      }),
-      prisma.user.count({
-        where: { banned: true },
-      }),
-      prisma.user.count({
-        where: {
-          role: "ADMIN",
-          banned: false,
-        },
-      }),
-    ]);
+  const [
+    totalUsers,
+    totalAdmins,
+    totalEditors,
+    bannedUsers,
+    activeAdmins,
+  ] = await Promise.all([
+    prisma.user.count(),
+    prisma.user.count({ where: { role: "ADMIN" } }),
+    prisma.user.count({ where: { role: "EDITOR" } }),
+    prisma.user.count({ where: { banned: true } }),
+    prisma.user.count({
+      where: {
+        role: "ADMIN",
+        banned: false,
+      },
+    }),
+  ]);
 
   const stats = [
     {
@@ -252,7 +291,10 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
 
   return (
     <main className="min-h-screen bg-[#080b14] text-white">
-      <ToastFeedback message={params.message} erreur={params.erreur} />
+      <ToastFeedback
+        message={params.message}
+        erreur={params.erreur}
+      />
 
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-10 lg:py-12">
         <header className="mb-8">
@@ -274,12 +316,15 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
               </h1>
 
               <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-400">
-                Consultez les comptes, recherchez des membres et gérez leurs
-                rôles ainsi que leur accès à la plateforme.
+                Consultez les comptes, recherchez des membres et gérez
+                leurs rôles ainsi que leur accès à la plateforme.
               </p>
             </div>
 
-            <Link href="/dashboard" className="btn btn-outline border-white/15">
+            <Link
+              href="/dashboard"
+              className="btn btn-outline border-white/15"
+            >
               Mon dashboard
             </Link>
           </div>
@@ -302,12 +347,13 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
                   {stat.value}
                 </span>
               </div>
-              <p className="mt-4 text-sm text-slate-400">{stat.label}</p>
+              <p className="mt-4 text-sm text-slate-400">
+                {stat.label}
+              </p>
             </article>
           ))}
         </section>
 
-        {/* Recherche automatique : le champ met à jour ?q= après 350 ms. */}
         <section className="mb-6 rounded-2xl border border-white/10 bg-slate-900/60 p-5">
           <UserSearch initialQuery={query} />
 
@@ -340,7 +386,6 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
             </div>
           ) : (
             <>
-              {/* Affichage mobile */}
               <div className="divide-y divide-white/10 md:hidden">
                 {users.map((user) => (
                   <article key={user.id} className="space-y-4 p-4">
@@ -371,7 +416,9 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
                         <div className="mt-2 flex flex-wrap gap-2">
                           <span
                             className={`badge badge-sm ${
-                              user.banned ? "badge-error" : "badge-success"
+                              user.banned
+                                ? "badge-error"
+                                : "badge-success"
                             }`}
                           >
                             {user.banned ? "Banni" : "Actif"}
@@ -394,7 +441,11 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
                       action={updateUserRole}
                       className="flex flex-wrap items-center gap-2"
                     >
-                      <input type="hidden" name="userId" value={user.id} />
+                      <input
+                        type="hidden"
+                        name="userId"
+                        value={user.id}
+                      />
                       <label
                         htmlFor={`role-mobile-${user.id}`}
                         className="sr-only"
@@ -420,7 +471,11 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
                     </form>
 
                     <form action={toggleUserBan}>
-                      <input type="hidden" name="userId" value={user.id} />
+                      <input
+                        type="hidden"
+                        name="userId"
+                        value={user.id}
+                      />
                       <button
                         type="submit"
                         disabled={
@@ -434,14 +489,15 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
                             : "btn-outline border-red-500/40 text-red-300 hover:bg-red-500/10"
                         }`}
                       >
-                        {user.banned ? "Réactiver le compte" : "Bannir le compte"}
+                        {user.banned
+                          ? "Réactiver le compte"
+                          : "Bannir le compte"}
                       </button>
                     </form>
                   </article>
                 ))}
               </div>
 
-              {/* Tableau desktop */}
               <div className="hidden overflow-x-auto md:block">
                 <table className="table">
                   <thead>
@@ -514,7 +570,9 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
                         <td>
                           <span
                             className={`badge ${
-                              user.banned ? "badge-error" : "badge-success"
+                              user.banned
+                                ? "badge-error"
+                                : "badge-success"
                             }`}
                           >
                             {user.banned ? "Banni" : "Actif"}
@@ -554,7 +612,9 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
                               >
                                 <option value="USER">Membre</option>
                                 <option value="EDITOR">Éditeur</option>
-                                <option value="ADMIN">Administrateur</option>
+                                <option value="ADMIN">
+                                  Administrateur
+                                </option>
                               </select>
                               <button
                                 type="submit"

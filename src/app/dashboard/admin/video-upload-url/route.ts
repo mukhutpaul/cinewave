@@ -10,8 +10,6 @@ import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { randomUUID } from "node:crypto";
 
-export const runtime = "nodejs";
-
 const MAX_FILE_SIZE = 500 * 1024 * 1024;
 const ALLOWED_TYPES = new Set(["video/mp4"]);
 const URL_EXPIRATION_SECONDS = 600;
@@ -97,9 +95,7 @@ export async function POST(request: Request) {
     }
 
     // 4. Lire et valider les données.
-    const body: unknown = await request
-      .json()
-      .catch(() => null);
+    const body: unknown = await request.json().catch(() => null);
 
     if (
       !body ||
@@ -117,10 +113,7 @@ export async function POST(request: Request) {
       !fileName.trim() ||
       fileName.length > 255
     ) {
-      return jsonError(
-        "Nom de fichier invalide.",
-        400,
-      );
+      return jsonError("Nom de fichier invalide.", 400);
     }
 
     if (
@@ -182,9 +175,7 @@ export async function POST(request: Request) {
     }
 
     if (
-      !["https:", "http:"].includes(
-        parsedPublicUrl.protocol,
-      ) ||
+      !["https:", "http:"].includes(parsedPublicUrl.protocol) ||
       parsedPublicUrl.username ||
       parsedPublicUrl.password ||
       parsedPublicUrl.search ||
@@ -206,13 +197,9 @@ export async function POST(request: Request) {
       ContentType: "video/mp4",
     });
 
-    const uploadUrl = await getSignedUrl(
-      client,
-      command,
-      {
-        expiresIn: URL_EXPIRATION_SECONDS,
-      },
-    );
+    const uploadUrl = await getSignedUrl(client, command, {
+      expiresIn: URL_EXPIRATION_SECONDS,
+    });
 
     // 7. Retourner une réponse JSON.
     return NextResponse.json(

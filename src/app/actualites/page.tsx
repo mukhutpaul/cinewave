@@ -1,4 +1,6 @@
+
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import Link from "next/link";
 import { connection } from "next/server";
 import { prisma } from "@/lib/prisma";
@@ -17,7 +19,42 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function ActualitesPage() {
+function ActualitesLoading() {
+  return (
+    <main className="min-h-screen bg-[#080b14] px-5 py-16 text-white sm:px-8">
+      <div className="mx-auto max-w-7xl animate-pulse space-y-8">
+        <div className="h-3 w-40 rounded bg-white/10" />
+        <div className="h-12 max-w-xl rounded bg-white/10" />
+        <div className="h-5 max-w-2xl rounded bg-white/10" />
+        <div className="grid gap-6 pt-8 sm:grid-cols-2 lg:grid-cols-3">
+          {[1, 2, 3].map((item) => (
+            <div
+              key={item}
+              className="overflow-hidden rounded-2xl border border-white/10"
+            >
+              <div className="aspect-video bg-white/10" />
+              <div className="space-y-3 p-5">
+                <div className="h-4 w-1/3 rounded bg-white/10" />
+                <div className="h-6 rounded bg-white/10" />
+                <div className="h-4 rounded bg-white/10" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </main>
+  );
+}
+
+export default function ActualitesPage() {
+  return (
+    <Suspense fallback={<ActualitesLoading />}>
+      <ActualitesContent />
+    </Suspense>
+  );
+}
+
+async function ActualitesContent() {
   await connection();
 
   const now = new Date();
@@ -27,7 +64,10 @@ export default async function ActualitesPage() {
       status: "PUBLISHED",
       publishedAt: { lte: now },
     },
-    orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
+    orderBy: [
+      { publishedAt: "desc" },
+      { createdAt: "desc" },
+    ],
     take: 12,
     select: {
       id: true,
@@ -71,7 +111,9 @@ export default async function ActualitesPage() {
 
           <h1 className="mt-4 max-w-3xl text-4xl font-black tracking-tight sm:text-5xl md:text-6xl">
             Toute l'actualité
-            <span className="block text-sky-400">du grand écran.</span>
+            <span className="block text-sky-400">
+              du grand écran.
+            </span>
           </h1>
 
           <p className="mt-6 max-w-2xl text-base leading-8 text-slate-300 sm:text-lg">
@@ -93,7 +135,8 @@ export default async function ActualitesPage() {
           </div>
 
           <span className="text-sm text-slate-400">
-            {articles.length} article{articles.length > 1 ? "s" : ""}
+            {articles.length} article
+            {articles.length > 1 ? "s" : ""}
             {articles.length === 12 ? " récents" : ""}
           </span>
         </div>
@@ -103,13 +146,16 @@ export default async function ActualitesPage() {
             <div className="text-5xl" aria-hidden="true">
               📰
             </div>
+
             <h2 className="mt-5 text-2xl font-bold">
               Les premières nouvelles arrivent bientôt
             </h2>
+
             <p className="mx-auto mt-3 max-w-lg leading-7 text-slate-400">
               La rédaction prépare ses premiers articles. Reviens bientôt
               pour suivre les nouveautés et les coulisses du cinéma.
             </p>
+
             <Link href="/critiques" className="btn btn-info mt-7">
               Lire les critiques
             </Link>
@@ -154,7 +200,9 @@ export default async function ActualitesPage() {
                       )}
 
                       {featuredArticle.publishedAt && (
-                        <time dateTime={featuredArticle.publishedAt.toISOString()}>
+                        <time
+                          dateTime={featuredArticle.publishedAt.toISOString()}
+                        >
                           {featuredArticle.publishedAt.toLocaleDateString(
                             "fr-FR",
                             {
@@ -174,9 +222,11 @@ export default async function ActualitesPage() {
                       </Link>
                     </h2>
 
-                    <p className="mt-4 leading-7 text-slate-400">
-                      {featuredArticle.excerpt}
-                    </p>
+                    {featuredArticle.excerpt && (
+                      <p className="mt-4 leading-7 text-slate-400">
+                        {featuredArticle.excerpt}
+                      </p>
+                    )}
 
                     <p className="mt-5 text-sm text-slate-500">
                       Par {featuredArticle.authorName}
@@ -246,9 +296,11 @@ export default async function ActualitesPage() {
                         </Link>
                       </h3>
 
-                      <p className="mt-3 line-clamp-4 flex-1 text-sm leading-7 text-slate-400">
-                        {article.excerpt}
-                      </p>
+                      {article.excerpt && (
+                        <p className="mt-3 line-clamp-4 flex-1 text-sm leading-7 text-slate-400">
+                          {article.excerpt}
+                        </p>
+                      )}
 
                       <div className="mt-5 border-t border-white/10 pt-4">
                         <p className="text-xs text-slate-500">
@@ -276,13 +328,16 @@ export default async function ActualitesPage() {
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-sky-400">
             Le regard de la rédaction
           </p>
+
           <h2 className="mt-3 text-2xl font-black">
             L'actualité ne raconte pas toute l'histoire.
           </h2>
+
           <p className="mt-3 max-w-xl leading-7 text-slate-400">
             Découvre aussi nos critiques et nos analyses pour approfondir
             tes prochaines séances de cinéma.
           </p>
+
           <Link href="/critiques" className="btn btn-info mt-6">
             Explorer les critiques →
           </Link>

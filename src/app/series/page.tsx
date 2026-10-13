@@ -1,15 +1,46 @@
+
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 import { connection } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
   title: "Séries",
-  description:
-    "Découvre les séries disponibles sur Histyra.",
+  description: "Découvre les séries disponibles sur Histyra.",
 };
 
-export default async function SeriesPage() {
+function SeriesLoading() {
+  return (
+    <main className="mx-auto min-h-screen max-w-7xl px-5 py-12 md:px-8">
+      <div className="animate-pulse">
+        <div className="h-4 w-40 rounded bg-slate-800" />
+        <div className="mt-4 h-12 w-72 max-w-full rounded bg-slate-800" />
+        <div className="mt-4 h-4 w-96 max-w-full rounded bg-slate-800" />
+      </div>
+
+      <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+        {Array.from({ length: 12 }).map((_, index) => (
+          <div key={index} className="animate-pulse">
+            <div className="aspect-[2/3] rounded-xl bg-slate-900" />
+            <div className="mt-3 h-4 rounded bg-slate-800" />
+            <div className="mt-2 h-3 w-20 rounded bg-slate-800" />
+          </div>
+        ))}
+      </div>
+    </main>
+  );
+}
+
+export default function SeriesPage() {
+  return (
+    <Suspense fallback={<SeriesLoading />}>
+      <SeriesContent />
+    </Suspense>
+  );
+}
+
+async function SeriesContent() {
   await connection();
 
   const now = new Date();
@@ -36,7 +67,7 @@ export default async function SeriesPage() {
   });
 
   return (
-    <div className="mx-auto min-h-screen max-w-7xl px-5 py-12 md:px-8">
+    <main className="mx-auto min-h-screen max-w-7xl px-5 py-12 md:px-8">
       <p className="text-sm font-bold uppercase tracking-widest text-rose-400">
         Le catalogue Histyra
       </p>
@@ -84,9 +115,10 @@ export default async function SeriesPage() {
                 )}
               </div>
 
-              <h2 className="mt-3 font-bold group-hover:text-rose-400">
+              <h2 className="mt-3 font-bold transition group-hover:text-rose-400">
                 {item.title}
               </h2>
+
               <p className="mt-1 text-xs text-slate-400">
                 {item.releaseYear ?? "Année inconnue"}
               </p>
@@ -103,6 +135,6 @@ export default async function SeriesPage() {
           Espace publicitaire
         </span>
       </div>
-    </div>
+    </main>
   );
 }

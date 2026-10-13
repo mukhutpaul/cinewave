@@ -1,8 +1,10 @@
 
+import { Suspense } from "react";
 import Link from "next/link";
 import { headers } from "next/headers";
 import { connection } from "next/server";
 import { redirect } from "next/navigation";
+
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -11,7 +13,35 @@ export const metadata = {
   description: "Tableau de bord d'administration de Histyra.",
 };
 
-export default async function AdminDashboardPage() {
+function AdminDashboardLoading() {
+  return (
+    <main className="min-h-screen bg-[#080b14] p-6 text-white md:p-10">
+      <div className="mx-auto max-w-7xl space-y-6">
+        <div className="h-8 w-64 animate-pulse rounded bg-white/10" />
+        <div className="h-36 animate-pulse rounded-3xl bg-white/5" />
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {Array.from({ length: 8 }).map((_, index) => (
+            <div
+              key={index}
+              className="h-32 animate-pulse rounded-2xl border border-white/10 bg-white/5"
+            />
+          ))}
+        </div>
+        <div className="h-64 animate-pulse rounded-2xl bg-white/5" />
+      </div>
+    </main>
+  );
+}
+
+export default function AdminDashboardPage() {
+  return (
+    <Suspense fallback={<AdminDashboardLoading />}>
+      <AdminDashboardContent />
+    </Suspense>
+  );
+}
+
+async function AdminDashboardContent() {
   await connection();
 
   // 1. Vérifier la session
@@ -19,11 +49,11 @@ export default async function AdminDashboardPage() {
     headers: await headers(),
   });
 
-  if (!session) {
+  if (!session?.user) {
     redirect("/connexion");
   }
 
-  // 2. Vérifier le rôle directement dans la base de données
+  // 2. Vérifier le rôle et le statut directement en base
   const admin = await prisma.user.findUnique({
     where: { id: session.user.id },
     select: {
@@ -121,7 +151,10 @@ export default async function AdminDashboardPage() {
   const drafts = draftMovies + draftArticles + draftReviews;
   const archived = archivedMovies + archivedArticles + archivedReviews;
   const published =
-    publishedMovies + publishedSeries + publishedArticles + publishedReviews;
+    publishedMovies +
+    publishedSeries +
+    publishedArticles +
+    publishedReviews;
 
   const dateFormatter = new Intl.DateTimeFormat("fr-FR", {
     day: "2-digit",
@@ -238,8 +271,7 @@ export default async function AdminDashboardPage() {
             </p>
 
             <h1 className="mt-2 text-3xl font-black sm:text-4xl">
-              Administration
-              <span className="text-rose-500">.</span>
+              Administration<span className="text-rose-500">.</span>
             </h1>
 
             <p className="mt-3 text-sm text-slate-400">
@@ -277,7 +309,10 @@ export default async function AdminDashboardPage() {
             </p>
 
             <div className="mt-6 flex flex-wrap gap-3">
-              <Link href="/dashboard" className="btn btn-outline border-white/20 text-white hover:bg-white/10">
+              <Link
+                href="/dashboard"
+                className="btn btn-outline border-white/20 text-white hover:bg-white/10"
+              >
                 Dashboard général
               </Link>
               <Link href="/dashboard/profil" className="btn btn-error text-white">

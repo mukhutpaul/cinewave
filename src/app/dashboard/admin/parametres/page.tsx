@@ -1,7 +1,10 @@
 
+import { Suspense } from "react";
 import Link from "next/link";
+import { connection } from "next/server";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+
 import {
   Settings,
   Globe,
@@ -17,7 +20,9 @@ import {
   LockKeyhole,
   Info,
 } from "lucide-react";
+
 import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 
 const settingsSections = [
   {
@@ -124,23 +129,76 @@ const settingsSections = [
   },
 ];
 
-export default async function AdminSettingsPage() {
+function SettingsLoading() {
+  return (
+    <main className="min-h-screen bg-slate-950 px-4 py-8 text-white sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl animate-pulse">
+        <div className="h-4 w-56 rounded bg-white/10" />
+
+        <div className="mt-8 flex items-center gap-4">
+          <div className="h-14 w-14 rounded-2xl bg-white/10" />
+          <div>
+            <div className="h-8 w-48 rounded bg-white/10" />
+            <div className="mt-3 h-4 w-72 max-w-full rounded bg-white/10" />
+          </div>
+        </div>
+
+        <div className="mt-8 h-44 rounded-2xl bg-white/5" />
+
+        <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <div
+              key={index}
+              className="h-72 rounded-2xl border border-white/10 bg-white/5"
+            />
+          ))}
+        </div>
+      </div>
+    </main>
+  );
+}
+
+export default function AdminSettingsPage() {
+  return (
+    <Suspense fallback={<SettingsLoading />}>
+      <AdminSettingsContent />
+    </Suspense>
+  );
+}
+
+async function AdminSettingsContent() {
+  await connection();
+
   const session = await auth.api.getSession({
     headers: await headers(),
   });
 
   if (!session?.user) {
-    redirect("/login");
+    redirect("/connexion");
   }
 
-  if (session.user.role !== "ADMIN" || session.user.banned) {
-    redirect("/");
+  const user = await prisma.user.findUnique({
+    where: {
+      id: session.user.id,
+    },
+    select: {
+      id: true,
+      role: true,
+      banned: true,
+    },
+  });
+
+  if (!user || user.banned) {
+    redirect("/connexion");
+  }
+
+  if (user.role !== "ADMIN") {
+    redirect("/dashboard");
   }
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        {/* Navigation */}
         <Link
           href="/dashboard/admin"
           className="mb-6 inline-flex items-center gap-2 text-sm text-slate-400 transition hover:text-white"
@@ -149,7 +207,6 @@ export default async function AdminSettingsPage() {
           Retour à l'administration
         </Link>
 
-        {/* En-tête */}
         <header className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center">
           <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-violet-400/20 bg-violet-500/10 text-violet-300">
             <Settings size={28} />
@@ -165,7 +222,6 @@ export default async function AdminSettingsPage() {
           </div>
         </header>
 
-        {/* Présentation */}
         <section className="mb-8 overflow-hidden rounded-2xl border border-violet-400/20 bg-gradient-to-br from-violet-950/70 via-slate-900 to-slate-900 p-6 sm:p-8">
           <div className="flex items-start gap-4">
             <div className="hidden h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/5 text-violet-300 sm:flex">
@@ -192,7 +248,6 @@ export default async function AdminSettingsPage() {
           </div>
         </section>
 
-        {/* Sections */}
         <section>
           <div className="mb-5">
             <h2 className="text-xl font-semibold">
@@ -271,13 +326,10 @@ export default async function AdminSettingsPage() {
           </div>
         </section>
 
-        {/* Information importante */}
         <section className="mt-8 rounded-xl border border-sky-400/15 bg-sky-400/5 p-4">
           <div className="flex items-start gap-3">
-            <Info
-              size={19}
-              className="mt-0.5 shrink-0 text-sky-300"
-            />
+            <Info size={19} className="mt-0.5 shrink-0 text-sky-300" />
+
             <div>
               <h2 className="text-sm font-semibold text-sky-200">
                 À propos de cette page

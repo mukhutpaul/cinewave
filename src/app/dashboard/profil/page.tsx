@@ -1,6 +1,9 @@
 
+import { Suspense } from "react";
+import { connection } from "next/server";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+
 import { auth } from "@/lib/auth";
 import ProfileForm from "./ProfileForm";
 
@@ -9,12 +12,35 @@ export const metadata = {
   description: "Gérez votre profil Histyra.",
 };
 
-export default async function ProfilePage() {
+function ProfileLoading() {
+  return (
+    <main className="min-h-screen bg-[#080b14] px-4 py-10 text-white sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-5xl animate-pulse space-y-4">
+        <div className="h-4 w-40 rounded bg-slate-800" />
+        <div className="h-10 w-64 max-w-full rounded bg-slate-800" />
+        <div className="h-4 w-80 max-w-full rounded bg-slate-800" />
+        <div className="mt-8 h-80 rounded-2xl bg-slate-900" />
+      </div>
+    </main>
+  );
+}
+
+export default function ProfilePage() {
+  return (
+    <Suspense fallback={<ProfileLoading />}>
+      <ProfileContent />
+    </Suspense>
+  );
+}
+
+async function ProfileContent() {
+  await connection();
+
   const session = await auth.api.getSession({
     headers: await headers(),
   });
 
-  if (!session) {
+  if (!session?.user) {
     redirect("/connexion");
   }
 

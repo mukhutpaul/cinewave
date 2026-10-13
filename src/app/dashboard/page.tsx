@@ -1,19 +1,49 @@
 
+import { Suspense } from "react";
 import Link from "next/link";
 import { headers } from "next/headers";
 import { connection } from "next/server";
 import { redirect } from "next/navigation";
+
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-export default async function DashboardPage() {
+function DashboardLoading() {
+  return (
+    <main className="min-h-screen bg-[#080b14] p-6 text-white md:p-10">
+      <div className="mx-auto max-w-7xl space-y-6">
+        <div className="h-8 w-64 animate-pulse rounded bg-white/10" />
+        <div className="h-48 animate-pulse rounded-3xl bg-white/5" />
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, index) => (
+            <div
+              key={index}
+              className="h-32 animate-pulse rounded-2xl border border-white/10 bg-white/5"
+            />
+          ))}
+        </div>
+        <div className="h-56 animate-pulse rounded-2xl bg-white/5" />
+      </div>
+    </main>
+  );
+}
+
+export default function DashboardPage() {
+  return (
+    <Suspense fallback={<DashboardLoading />}>
+      <DashboardContent />
+    </Suspense>
+  );
+}
+
+async function DashboardContent() {
   await connection();
 
   const session = await auth.api.getSession({
     headers: await headers(),
   });
 
-  if (!session) {
+  if (!session?.user) {
     redirect("/connexion");
   }
 
@@ -37,49 +67,58 @@ export default async function DashboardPage() {
   const isEditor = user.role === "EDITOR" || user.role === "ADMIN";
   const isAdmin = user.role === "ADMIN";
 
-  const [
-    movies,
-    series,
-    reviews,
-    articles,
-    draftMovies,
-    draftReviews,
-    draftArticles,
-    users,
-  ] = isEditor
-    ? await Promise.all([
-        prisma.movie.count({
-          where: { status: "PUBLISHED", type: "MOVIE" },
-        }),
-        prisma.movie.count({
-          where: { status: "PUBLISHED", type: "SERIES" },
-        }),
-        prisma.review.count({
-          where: { status: "PUBLISHED" },
-        }),
-        prisma.article.count({
-          where: { status: "PUBLISHED" },
-        }),
-        prisma.movie.count({
-          where: { status: "DRAFT" },
-        }),
-        prisma.review.count({
-          where: { status: "DRAFT" },
-        }),
-        prisma.article.count({
-          where: { status: "DRAFT" },
-        }),
-        isAdmin ? prisma.user.count() : Promise.resolve(0),
-      ])
-    : [0, 0, 0, 0, 0, 0, 0, 0];
+  let movies = 0;
+  let series = 0;
+  let reviews = 0;
+  let articles = 0;
+  let draftMovies = 0;
+  let draftReviews = 0;
+  let draftArticles = 0;
+  let users = 0;
 
-  const firstName = user.name.trim().split(/\s+/)[0] || "Cinéphile";
+  if (isEditor) {
+    [
+      movies,
+      series,
+      reviews,
+      articles,
+      draftMovies,
+      draftReviews,
+      draftArticles,
+      users,
+    ] = await Promise.all([
+      prisma.movie.count({
+        where: { status: "PUBLISHED", type: "MOVIE" },
+      }),
+      prisma.movie.count({
+        where: { status: "PUBLISHED", type: "SERIES" },
+      }),
+      prisma.review.count({
+        where: { status: "PUBLISHED" },
+      }),
+      prisma.article.count({
+        where: { status: "PUBLISHED" },
+      }),
+      prisma.movie.count({
+        where: { status: "DRAFT" },
+      }),
+      prisma.review.count({
+        where: { status: "DRAFT" },
+      }),
+      prisma.article.count({
+        where: { status: "DRAFT" },
+      }),
+      isAdmin ? prisma.user.count() : Promise.resolve(0),
+    ]);
+  }
 
-  const roleLabel = {
+  const firstName = user.name?.trim().split(/\s+/)[0] || "Cinéphile";
+
+  const roleLabel: Record<string, string> = {
     USER: "Membre",
     EDITOR: "Éditeur",
     ADMIN: "Administrateur",
-  }[user.role];
+  };
 
   const shortcuts = [
     {
@@ -112,10 +151,42 @@ export default async function DashboardPage() {
     },
   ];
 
+  const publishedStats = [
+    {
+      label: "Films publiés",
+      value: movies,
+      icon: "🎬",
+      color: "text-rose-400",
+    },
+    {
+      label: "Séries publiées",
+      value: series,
+      icon: "📺",
+      color: "text-violet-400",
+    },
+    {
+      label: "Critiques publiées",
+      value: reviews,
+      icon: "✍️",
+      color: "text-amber-400",
+    },
+    {
+      label: "Articles publiés",
+      value: articles,
+      icon: "📰",
+      color: "text-sky-400",
+    },
+  ];
+
+  const draftStats = [
+    { label: "Films en brouillon", value: draftMovies },
+    { label: "Critiques en brouillon", value: draftReviews },
+    { label: "Articles en brouillon", value: draftArticles },
+  ];
+
   return (
     <main className="min-h-screen bg-[#080b14] text-white">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-10 lg:py-12">
-        {/* En-tête */}
         <header className="mb-10 flex flex-wrap items-center justify-between gap-5">
           <div>
             <Link
@@ -140,7 +211,6 @@ export default async function DashboardPage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
-            {/* Bouton visible uniquement pour l'administrateur */}
             {isAdmin && (
               <Link
                 href="/dashboard/admin"
@@ -169,14 +239,13 @@ export default async function DashboardPage() {
               <div className="min-w-0">
                 <p className="max-w-48 truncate font-bold">{user.name}</p>
                 <span className="badge badge-sm badge-outline border-rose-500/50 text-rose-400">
-                  {roleLabel}
+                  {roleLabel[user.role] ?? "Membre"}
                 </span>
               </div>
             </div>
           </div>
         </header>
 
-        {/* Bannière */}
         <section className="relative isolate overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-[#241126] via-[#17152b] to-slate-950 p-6 sm:p-10">
           <div
             aria-hidden="true"
@@ -212,12 +281,11 @@ export default async function DashboardPage() {
           </div>
         </section>
 
-        {/* Statistiques éditoriales */}
         {isEditor && (
           <section className="mt-10" aria-labelledby="stats-heading">
             <div className="mb-5">
               <p className="text-xs font-bold uppercase tracking-[0.2em] text-rose-400">
-                Vue d'ensemble
+                Vue d&apos;ensemble
               </p>
               <h2 id="stats-heading" className="mt-2 text-2xl font-bold">
                 Activité éditoriale
@@ -228,32 +296,7 @@ export default async function DashboardPage() {
             </div>
 
             <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-              {[
-                {
-                  label: "Films publiés",
-                  value: movies,
-                  icon: "🎬",
-                  color: "text-rose-400",
-                },
-                {
-                  label: "Séries publiées",
-                  value: series,
-                  icon: "📺",
-                  color: "text-violet-400",
-                },
-                {
-                  label: "Critiques publiées",
-                  value: reviews,
-                  icon: "✍️",
-                  color: "text-amber-400",
-                },
-                {
-                  label: "Articles publiés",
-                  value: articles,
-                  icon: "📰",
-                  color: "text-sky-400",
-                },
-              ].map((stat) => (
+              {publishedStats.map((stat) => (
                 <article
                   key={stat.label}
                   className="rounded-2xl border border-white/10 bg-slate-900/70 p-5"
@@ -272,11 +315,7 @@ export default async function DashboardPage() {
             </div>
 
             <div className="mt-5 grid gap-4 sm:grid-cols-3">
-              {[
-                { label: "Films en brouillon", value: draftMovies },
-                { label: "Critiques en brouillon", value: draftReviews },
-                { label: "Articles en brouillon", value: draftArticles },
-              ].map((item) => (
+              {draftStats.map((item) => (
                 <div
                   key={item.label}
                   className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.03] p-4"
@@ -287,7 +326,6 @@ export default async function DashboardPage() {
               ))}
             </div>
 
-            {/* Raccourci d'administration */}
             {isAdmin && (
               <section className="mt-5 rounded-2xl border border-rose-500/30 bg-gradient-to-r from-rose-500/10 to-violet-500/10 p-5 sm:p-6">
                 <div className="flex flex-wrap items-center justify-between gap-5">
@@ -299,8 +337,8 @@ export default async function DashboardPage() {
                       Administration Histyra
                     </h3>
                     <p className="mt-2 text-sm leading-6 text-slate-400">
-                      Gérez les comptes, consultez les statistiques globales et
-                      accédez aux outils d'administration de la plateforme.
+                      Gérez les comptes, consultez les statistiques globales
+                      et accédez aux outils d&apos;administration.
                     </p>
                     <p className="mt-2 text-sm text-slate-300">
                       {users} compte(s) enregistré(s).
@@ -311,7 +349,7 @@ export default async function DashboardPage() {
                     href="/dashboard/admin"
                     className="btn btn-error gap-2 text-white"
                   >
-                    Ouvrir l'administration
+                    Ouvrir l&apos;administration
                     <span aria-hidden="true">→</span>
                   </Link>
                 </div>
@@ -320,7 +358,6 @@ export default async function DashboardPage() {
           </section>
         )}
 
-        {/* Raccourcis */}
         <section className="mt-10" aria-labelledby="shortcuts-heading">
           <div className="mb-5">
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-rose-400">
@@ -358,7 +395,6 @@ export default async function DashboardPage() {
           </div>
         </section>
 
-        {/* Profil */}
         <section
           className="mt-10 rounded-2xl border border-white/10 bg-slate-900/50 p-6 sm:p-8"
           aria-labelledby="profile-heading"

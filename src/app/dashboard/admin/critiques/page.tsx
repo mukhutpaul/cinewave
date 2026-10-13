@@ -1,4 +1,5 @@
 
+import { Suspense } from "react";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import Link from "next/link";
@@ -7,14 +8,36 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import ReviewManager from "@/components/admin/critiques/ReviewManager";
 
-export default async function CritiquesAdminPage() {
+export default function CritiquesAdminPage() {
+  return (
+    <Suspense fallback={<CritiquesLoading />}>
+      <CritiquesAdminContent />
+    </Suspense>
+  );
+}
+
+function CritiquesLoading() {
+  return (
+    <main className="min-h-screen space-y-8 bg-zinc-950 p-6 text-white md:p-10">
+      <header className="space-y-3">
+        <div className="h-4 w-40 animate-pulse rounded bg-white/10" />
+        <div className="h-9 w-56 animate-pulse rounded bg-white/10" />
+        <div className="h-4 w-80 max-w-full animate-pulse rounded bg-white/10" />
+      </header>
+
+      <div className="h-64 animate-pulse rounded-xl border border-white/10 bg-white/5" />
+    </main>
+  );
+}
+
+async function CritiquesAdminContent() {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
 
   // Vérifier que l'utilisateur est connecté
   if (!session?.user) {
-    redirect("/login");
+    redirect("/connexion");
   }
 
   // Réserver cette page aux administrateurs actifs
