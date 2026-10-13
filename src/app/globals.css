@@ -3,9 +3,9 @@
 
 :root {
   color-scheme: dark;
-  --cine-bg: #080b14;
-  --cine-panel: #111827;
-  --cine-accent: #f43f5e;
+  --His-bg: #080b14;
+  --His-panel: #111827;
+  --His-accent: #f43f5e;
 }
 
 html {
@@ -14,7 +14,7 @@ html {
 
 body {
   min-height: 100vh;
-  background: var(--cine-bg);
+  background: var(--His-bg);
   color: #f8fafc;
 }
 
@@ -23,12 +23,12 @@ body {
   color: white;
 }
 
-.cine-container {
+.His-container {
   width: min(100% - 2rem, 80rem);
   margin-inline: auto;
 }
 
-.cine-hero {
+.His-hero {
   background:
     radial-gradient(ellipse at 80% 20%, #9f123955, transparent 40%),
     linear-gradient(135deg, #111827, #17152b 55%, #450a1c);

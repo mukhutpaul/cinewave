@@ -228,7 +228,7 @@ export default function FilmsManager({
       const formData = new FormData();
       formData.append("file", file);
       formData.append("upload_preset", uploadPreset);
-      formData.append("folder", "cinewave");
+      formData.append("folder", "Histyra");
 
       const response = await fetch(
         `https://api.cloudinary.com/v1_1/${encodeURIComponent(
@@ -1040,7 +1040,7 @@ export default function FilmsManager({
                   <span>
                     <span className="block font-medium">Mettre en avant</span>
                     <span className="text-sm text-base-content/60">
-                      Signaler ce contenu comme sélectionné sur CineWave.
+                      Signaler ce contenu comme sélectionné sur Histyra.
                     </span>
                   </span>
                 </label>

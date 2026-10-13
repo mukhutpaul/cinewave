@@ -6,14 +6,14 @@ import HomeContent from "./home-content";
 export const metadata: Metadata = {
   title: "Accueil",
   description:
-    "Découvre des films, des séries, des critiques indépendantes et des actualités cinéma sur CineWave.",
+    "Découvre des films, des séries, des critiques indépendantes et des actualités cinéma sur Histyra.",
   openGraph: {
-    title: "CineWave — Le magazine cinéma",
+    title: "Histyra — Le magazine cinéma",
     description:
       "Films, séries, critiques indépendantes et actualités pour les passionnés du grand écran.",
     type: "website",
     locale: "fr_FR",
-    siteName: "CineWave",
+    siteName: "Histyra",
   },
 };
 

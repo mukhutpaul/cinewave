@@ -22,7 +22,7 @@ import {
 const menuItems = [
   {
     title: "Vue d'ensemble",
-    description: "Consultez l'activité générale de CineWave.",
+    description: "Consultez l'activité générale de Histyra.",
     href: "/dashboard/admin",
     icon: LayoutDashboard,
   },
@@ -108,7 +108,7 @@ export default async function AdminPage() {
             </h1>
 
             <p className="mt-2 text-sm text-slate-400 sm:text-base">
-              Gérez votre plateforme CineWave depuis un espace unique.
+              Gérez votre plateforme Histyra depuis un espace unique.
             </p>
           </div>
 
@@ -133,7 +133,7 @@ export default async function AdminPage() {
               </span>
 
               <h2 className="mt-4 text-2xl font-bold">
-                Bienvenue dans CineWave
+                Bienvenue dans Histyra
               </h2>
 
               <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">
@@ -254,7 +254,7 @@ export default async function AdminPage() {
         </section>
 
         <footer className="mt-8 border-t border-slate-800 pt-5 text-center text-xs text-slate-500">
-          CineWave · Espace d’administration
+          Histyra · Espace d’administration
         </footer>
       </div>
     </main>

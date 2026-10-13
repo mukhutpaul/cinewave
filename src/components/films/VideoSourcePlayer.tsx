@@ -145,7 +145,7 @@ export default function VideoSourcePlayer({ sources }: Props) {
           <iframe
             key={selectedSource.id}
             src={youtubeUrl}
-            title={selectedSource.label || "Vidéo YouTube CineWave"}
+            title={selectedSource.label || "Vidéo YouTube Histyra"}
             className="absolute inset-0 h-full w-full border-0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             referrerPolicy="strict-origin-when-cross-origin"
@@ -159,7 +159,7 @@ export default function VideoSourcePlayer({ sources }: Props) {
             playsInline
             preload="metadata"
             controlsList="nodownload"
-            aria-label={selectedSource.label || "Lecteur vidéo CineWave"}
+            aria-label={selectedSource.label || "Lecteur vidéo Histyra"}
           >
             <source src={selectedSource.url} />
             Votre navigateur ne prend pas en charge la lecture vidéo.
@@ -194,7 +194,7 @@ export default function VideoSourcePlayer({ sources }: Props) {
           {isYouTube
             ? "YouTube"
             : selectedSource.provider === "OWN_HOSTING"
-              ? "Hébergement CineWave"
+              ? "Hébergement Histyra"
               : "Source externe"}
         </span>
       </div>

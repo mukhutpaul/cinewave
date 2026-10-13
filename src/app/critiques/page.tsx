@@ -4,16 +4,16 @@ import { connection } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
-  title: "Critiques cinéma — CineWave",
+  title: "Critiques cinéma — Histyra",
   description:
-    "Découvre nos critiques de films et de séries, nos analyses et nos avis indépendants sur CineWave.",
+    "Découvre nos critiques de films et de séries, nos analyses et nos avis indépendants sur Histyra.",
   openGraph: {
-    title: "Critiques cinéma — CineWave",
+    title: "Critiques cinéma — Histyra",
     description:
       "Des critiques indépendantes pour regarder le cinéma autrement.",
     type: "website",
     locale: "fr_FR",
-    siteName: "CineWave",
+    siteName: "Histyra",
   },
 };
 

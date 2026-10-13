@@ -13,8 +13,6 @@ type PageProps = {
   params: Promise<{ slug: string }>;
 };
 
-// Autorise le rendu bloquant sur les versions de Next.js
-// qui prennent en charge cette option avec cacheComponents.
 export const instant = false;
 
 function getSiteUrl(): URL | undefined {
@@ -36,9 +34,7 @@ function formatDuration(duration: number | null): string | null {
   const minutes = duration % 60;
 
   if (hours > 0) {
-    return minutes > 0
-      ? `${hours} h ${minutes} min`
-      : `${hours} h`;
+    return minutes > 0 ? `${hours} h ${minutes} min` : `${hours} h`;
   }
 
   return `${minutes} min`;
@@ -58,8 +54,6 @@ function getPublishedMovieWhere(slug: string, now: Date) {
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
-  // Indique à Next.js que les données suivantes dépendent
-  // de la requête et ne doivent pas être évaluées au prérendu.
   await connection();
 
   const { slug } = await params;
@@ -80,7 +74,7 @@ export async function generateMetadata({
 
   if (!movie) {
     return {
-      title: "Film introuvable | CineWave",
+      title: "Film introuvable | Histyra",
       robots: {
         index: false,
         follow: false,
@@ -93,7 +87,7 @@ export async function generateMetadata({
   const description =
     movie.seoDescription?.trim() ||
     movie.synopsis?.slice(0, 160) ||
-    `Découvrez ${movie.title} sur CineWave.`;
+    `Découvrez ${movie.title} sur Histyra.`;
 
   const siteUrl = getSiteUrl();
 
@@ -104,22 +98,17 @@ export async function generateMetadata({
   const image = movie.backdropUrl || movie.posterUrl || undefined;
 
   return {
-    title: `${title} | CineWave`,
+    title: `${title} | Histyra`,
     description,
-
-    alternates: canonicalUrl
-      ? { canonical: canonicalUrl }
-      : undefined,
+    alternates: canonicalUrl ? { canonical: canonicalUrl } : undefined,
 
     openGraph: {
       type: "video.movie",
       title,
       description,
       url: canonicalUrl,
-      siteName: "CineWave",
-      images: image
-        ? [{ url: image, alt: movie.title }]
-        : [],
+      siteName: "Histyra",
+      images: image ? [{ url: image, alt: movie.title }] : [],
     },
 
     twitter: {
@@ -131,24 +120,23 @@ export async function generateMetadata({
   };
 }
 
-export default async function FilmDetailPage({
-  params,
-}: PageProps) {
-  // Important : placer connection() avant new Date(),
-  // les accès à la session et les requêtes Prisma.
+export default async function FilmDetailPage({ params }: PageProps) {
   await connection();
 
   const { slug } = await params;
 
-  // 1. Vérifier l'authentification.
+  // 1. Vérifier l'authentification avant de charger le détail du film.
   const session = await auth.api.getSession({
     headers: await headers(),
   });
 
   if (!session?.user) {
-    redirect(
-      `/login?callbackURL=${encodeURIComponent(`/films/${slug}`)}`
-    );
+    const loginParams = new URLSearchParams({
+      callbackURL: `/films/${slug}`,
+      reason: "auth_required",
+    });
+
+    redirect(`/connexion?${loginParams.toString()}`);
   }
 
   // 2. Récupérer le film publié.
@@ -222,7 +210,7 @@ export default async function FilmDetailPage({
     notFound();
   }
 
-  // 3. Récupérer les films de la même catégorie.
+  // 3. Films de la même catégorie.
   const similarMovies = movie.categoryId
     ? await prisma.movie.findMany({
         where: {
@@ -294,10 +282,7 @@ export default async function FilmDetailPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(structuredData).replace(
-            /</g,
-            "\\u003c"
-          ),
+          __html: JSON.stringify(structuredData).replace(/</g, "\\u003c"),
         }}
       />
 
@@ -337,10 +322,7 @@ export default async function FilmDetailPage({
 
             <span aria-hidden="true">/</span>
 
-            <Link
-              href="/films"
-              className="transition hover:text-white"
-            >
+            <Link href="/films" className="transition hover:text-white">
               Films
             </Link>
 
@@ -390,9 +372,7 @@ export default async function FilmDetailPage({
               </h1>
 
               <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-gray-300">
-                {movie.releaseYear && (
-                  <span>{movie.releaseYear}</span>
-                )}
+                {movie.releaseYear && <span>{movie.releaseYear}</span>}
 
                 {durationLabel && <span>{durationLabel}</span>}
 
@@ -402,9 +382,7 @@ export default async function FilmDetailPage({
                 </span>
               </div>
 
-              <h2 className="mt-7 text-lg font-semibold">
-                Synopsis
-              </h2>
+              <h2 className="mt-7 text-lg font-semibold">Synopsis</h2>
 
               <p className="mt-2 max-w-3xl whitespace-pre-line text-sm leading-7 text-gray-300 sm:text-base">
                 {movie.synopsis}
@@ -450,9 +428,7 @@ export default async function FilmDetailPage({
           <VideoSourcePlayer sources={movie.videoSources} />
         ) : (
           <div className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center">
-            <p className="text-lg font-semibold">
-              Vidéo indisponible
-            </p>
+            <p className="text-lg font-semibold">Vidéo indisponible</p>
 
             <p className="mt-2 text-sm text-gray-400">
               Aucune source vidéo n'est disponible pour le moment.
@@ -462,7 +438,7 @@ export default async function FilmDetailPage({
         )}
       </section>
 
-      {/* Espace publicitaire : emplacement seulement */}
+      {/* Espace publicitaire */}
       <section
         aria-label="Publicité"
         className="mx-auto max-w-7xl px-4 pb-8 sm:px-6 lg:px-8"
@@ -473,9 +449,7 @@ export default async function FilmDetailPage({
               Intégrez ici votre composant publicitaire AdSense.
             </p>
           ) : (
-            <p className="text-xs text-gray-500">
-              Espace publicitaire
-            </p>
+            <p className="text-xs text-gray-500">Espace publicitaire</p>
           )}
         </div>
       </section>
@@ -584,14 +558,10 @@ export default async function FilmDetailPage({
                   </h3>
 
                   <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-gray-400">
-                    {similar.releaseYear && (
-                      <span>{similar.releaseYear}</span>
-                    )}
+                    {similar.releaseYear && <span>{similar.releaseYear}</span>}
 
                     {similar.duration && (
-                      <span>
-                        {formatDuration(similar.duration)}
-                      </span>
+                      <span>{formatDuration(similar.duration)}</span>
                     )}
 
                     {similar.category?.name && (

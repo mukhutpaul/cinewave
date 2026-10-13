@@ -22,7 +22,7 @@ import { auth } from "@/lib/auth";
 const settingsSections = [
   {
     title: "Général",
-    description: "Configurez le nom et les informations de CineWave.",
+    description: "Configurez le nom et les informations de Histyra.",
     detail: "Identité et informations du site",
     icon: Globe,
     color: "text-violet-300",
@@ -43,7 +43,7 @@ const settingsSections = [
     color: "text-pink-300",
     bg: "bg-pink-500/10",
     items: [
-      "Logo de CineWave",
+      "Logo de Histyra",
       "Favicon",
       "Couleur principale",
       "Image de couverture",
@@ -52,7 +52,7 @@ const settingsSections = [
   },
   {
     title: "SEO",
-    description: "Préparez CineWave pour les moteurs de recherche.",
+    description: "Préparez Histyra pour les moteurs de recherche.",
     detail: "Métadonnées et référencement",
     icon: Search,
     color: "text-sky-300",
@@ -160,7 +160,7 @@ export default async function AdminSettingsPage() {
               Paramètres
             </h1>
             <p className="mt-2 text-sm text-slate-400 sm:text-base">
-              Configurez et personnalisez votre plateforme CineWave.
+              Configurez et personnalisez votre plateforme Histyra.
             </p>
           </div>
         </header>
@@ -179,7 +179,7 @@ export default async function AdminSettingsPage() {
               </div>
 
               <h2 className="mt-3 text-xl font-semibold">
-                Gérez la configuration de CineWave
+                Gérez la configuration de Histyra
               </h2>
 
               <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300">
@@ -294,7 +294,7 @@ export default async function AdminSettingsPage() {
         </section>
 
         <footer className="mt-8 border-t border-slate-800 pt-5 text-center text-xs text-slate-500">
-          CineWave · Paramètres d'administration
+          Histyra · Paramètres d'administration
         </footer>
       </div>
     </main>

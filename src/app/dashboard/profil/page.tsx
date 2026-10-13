@@ -5,8 +5,8 @@ import { auth } from "@/lib/auth";
 import ProfileForm from "./ProfileForm";
 
 export const metadata = {
-  title: "Mon profil | CineWave",
-  description: "Gérez votre profil CineWave.",
+  title: "Mon profil | Histyra",
+  description: "Gérez votre profil Histyra.",
 };
 
 export default async function ProfilePage() {
@@ -23,7 +23,7 @@ export default async function ProfilePage() {
       <div className="mx-auto max-w-5xl">
         <div className="mb-8">
           <div className="mb-2 text-sm text-rose-400">
-            CineWave / Mon compte
+            Histyra / Mon compte
           </div>
 
           <h1 className="text-3xl font-black tracking-tight sm:text-4xl">

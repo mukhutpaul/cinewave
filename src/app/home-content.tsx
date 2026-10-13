@@ -379,7 +379,7 @@ export default async function HomeContent() {
       {/* Appel à l'inscription */}
       <section className="mx-5 mb-12 rounded-3xl border border-white/10 bg-gradient-to-br from-indigo-950 to-rose-950 px-6 py-12 sm:px-12 md:mx-auto md:max-w-7xl">
         <p className="text-sm font-bold uppercase tracking-widest text-rose-300">
-          Bienvenue chez CineWave
+          Bienvenue chez Histyra
         </p>
         <h2 className="mt-3 max-w-2xl text-3xl font-black sm:text-4xl">
           Chaque film mérite qu’on raconte son histoire.
@@ -389,7 +389,7 @@ export default async function HomeContent() {
           et partager ta passion du grand écran.
         </p>
         <Link href="/inscription" className="btn btn-error mt-7 text-white">
-          Rejoindre CineWave
+          Rejoindre Histyra
         </Link>
       </section>
     </div>

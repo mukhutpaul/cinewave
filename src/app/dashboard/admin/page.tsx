@@ -7,8 +7,8 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 export const metadata = {
-  title: "Administration | CineWave",
-  description: "Tableau de bord d'administration de CineWave.",
+  title: "Administration | Histyra",
+  description: "Tableau de bord d'administration de Histyra.",
 };
 
 export default async function AdminDashboardPage() {
@@ -234,7 +234,7 @@ export default async function AdminDashboardPage() {
             </Link>
 
             <p className="mt-5 text-xs font-bold uppercase tracking-[0.25em] text-rose-400">
-              CineWave Control Center
+              Histyra Control Center
             </p>
 
             <h1 className="mt-2 text-3xl font-black sm:text-4xl">
@@ -268,7 +268,7 @@ export default async function AdminDashboardPage() {
             </span>
 
             <h2 className="mt-4 text-2xl font-black sm:text-3xl">
-              Pilotez CineWave.
+              Pilotez Histyra.
             </h2>
 
             <p className="mt-3 leading-7 text-slate-300">
@@ -327,7 +327,7 @@ export default async function AdminDashboardPage() {
               Outils
             </p>
             <h2 id="management-heading" className="mt-2 text-2xl font-bold">
-              Gestion de CineWave
+              Gestion de Histyra
             </h2>
           </div>
 
@@ -469,7 +469,7 @@ export default async function AdminDashboardPage() {
         </div>
 
         <footer className="mt-10 border-t border-white/10 pt-6 text-center text-xs text-slate-500">
-          © {new Date().getFullYear()} CineWave — Administration
+          © {new Date().getFullYear()} Histyra — Administration
         </footer>
       </div>
     </main>

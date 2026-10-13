@@ -94,19 +94,19 @@ export default function AuthForm({ mode }: AuthFormProps) {
       </div>
 
       <section className="relative w-full max-w-md">
-        {/* Identité CineWave */}
+        {/* Identité Histyra */}
         <div className="mb-7 text-center">
           <Link
             href="/"
-            aria-label="CineWave, accueil"
+            aria-label="Histyra, accueil"
             className="inline-flex items-center gap-3"
           >
             <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-rose-500 to-pink-700 text-xl font-black text-white shadow-lg shadow-rose-950/40">
-              C
+              H
             </span>
 
             <span className="text-3xl font-black tracking-tight text-white">
-              Cine<span className="text-rose-500">Wave</span>
+              His<span className="text-rose-500">tyra</span>
             </span>
           </Link>
 
@@ -126,7 +126,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
               </span>
 
               <h1 className="mt-4 text-3xl font-black tracking-tight text-white">
-                {isSignup ? "Rejoins CineWave." : "Heureux de te revoir."}
+                {isSignup ? "Rejoins Histyra." : "Heureux de te revoir."}
               </h1>
 
               <p className="mt-2 text-sm leading-6 text-slate-400">
@@ -348,13 +348,13 @@ export default function AuthForm({ mode }: AuthFormProps) {
 
               <p className="text-center text-xs leading-5 text-slate-500">
                 {isSignup
-                  ? "En créant un compte, tu pourras retrouver plus facilement ton espace CineWave."
+                  ? "En créant un compte, tu pourras retrouver plus facilement ton espace Histyra."
                   : "Tes identifiants restent confidentiels."}
               </p>
             </form>
 
             <div className="divider my-6 text-xs text-slate-600">
-              {isSignup ? "DÉJÀ MEMBRE ?" : "NOUVEAU SUR CINEWAVE ?"}
+              {isSignup ? "DÉJÀ MEMBRE ?" : "NOUVEAU SUR Histyra ?"}
             </div>
 
             <p className="text-center text-sm text-slate-400">

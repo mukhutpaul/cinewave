@@ -75,7 +75,7 @@ export default async function CritiquesAdminPage() {
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <p className="text-sm text-zinc-400">
-            CineWave / Administration
+            Histyra / Administration
           </p>
 
           <h1 className="mt-2 text-3xl font-bold">

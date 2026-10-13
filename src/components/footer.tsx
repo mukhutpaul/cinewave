@@ -6,7 +6,7 @@ export default function Footer() {
       <div className="mx-auto flex max-w-7xl flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <Link href="/" className="text-xl font-black">
-            Cine<span className="text-rose-500">Wave</span>
+            His<span className="text-rose-500">tyra</span>
           </Link>
 
           <p className="mt-2 text-sm text-slate-400">
@@ -30,7 +30,7 @@ export default function Footer() {
         </nav>
 
         <p className="text-xs text-slate-500">
-          © 2026 CineWave. Tous droits réservés.
+          © 2026 Histyra. Tous droits réservés.
         </p>
       </div>
     </footer>

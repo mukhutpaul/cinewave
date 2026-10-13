@@ -38,7 +38,7 @@ export default async function AdminArticlesPage() {
           Administration des articles
         </h1>
         <p className="mt-2 text-sm text-gray-400">
-          Rédigez, publiez et gérez les actualités de CineWave.
+          Rédigez, publiez et gérez les actualités de Histyra.
         </p>
       </header>
 

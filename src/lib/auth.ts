@@ -3,7 +3,7 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "@/lib/prisma";
 
 export const auth = betterAuth({
-  appName: "CineWave",
+  appName: "Histyra",
 
   database: prismaAdapter(prisma, {
     provider: "postgresql",

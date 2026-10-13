@@ -10,22 +10,22 @@ import { Toaster } from "@/components/ui/Toaster";
 
 export const metadata: Metadata = {
   title: {
-    default: "CineWave — Le magazine cinéma",
-    template: "%s | CineWave",
+    default: "Histyra — Le magazine cinéma",
+    template: "%s | Histyra",
   },
 
   description:
-    "Découvre des critiques indépendantes, des analyses, des actualités et des recommandations de films et séries sur CineWave.",
+    "Découvre des critiques indépendantes, des analyses, des actualités et des recommandations de films et séries sur Histyra.",
 
-  applicationName: "CineWave",
+  applicationName: "Histyra",
 
   openGraph: {
-    title: "CineWave — Le magazine cinéma",
+    title: "Histyra — Le magazine cinéma",
     description:
       "Critiques, analyses et découvertes pour les passionnés du grand écran.",
     type: "website",
     locale: "fr_FR",
-    siteName: "CineWave",
+    siteName: "Histyra",
   },
 
   robots: {
@@ -59,7 +59,7 @@ export default function RootLayout({
 
         <Footer />
 
-        {/* Notifications globales CineWave */}
+        {/* Notifications globales Histyra */}
         <Toaster />
       </body>
     </html>

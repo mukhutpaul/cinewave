@@ -122,7 +122,7 @@ export default async function DashboardPage() {
               href="/"
               className="text-sm font-bold text-slate-400 hover:text-white"
             >
-              ← Retour à CineWave
+              ← Retour à Histyra
             </Link>
 
             <p className="mt-5 text-xs font-bold uppercase tracking-[0.25em] text-rose-400">
@@ -185,7 +185,7 @@ export default async function DashboardPage() {
 
           <div className="max-w-2xl">
             <span className="badge border-rose-400/30 bg-rose-500/10 text-rose-300">
-              ✦ L'univers CineWave
+              ✦ L'univers Histyra
             </span>
 
             <h2 className="mt-5 text-2xl font-black sm:text-3xl">
@@ -223,7 +223,7 @@ export default async function DashboardPage() {
                 Activité éditoriale
               </h2>
               <p className="mt-2 text-sm text-slate-400">
-                État actuel des contenus enregistrés dans CineWave.
+                État actuel des contenus enregistrés dans Histyra.
               </p>
             </div>
 
@@ -296,7 +296,7 @@ export default async function DashboardPage() {
                       ⚙️ Espace réservé
                     </span>
                     <h3 className="mt-3 text-xl font-bold">
-                      Administration CineWave
+                      Administration Histyra
                     </h3>
                     <p className="mt-2 text-sm leading-6 text-slate-400">
                       Gérez les comptes, consultez les statistiques globales et
@@ -327,7 +327,7 @@ export default async function DashboardPage() {
               À découvrir
             </p>
             <h2 id="shortcuts-heading" className="mt-2 text-2xl font-bold">
-              Explore CineWave
+              Explore Histyra
             </h2>
           </div>
 
@@ -399,7 +399,7 @@ export default async function DashboardPage() {
         </section>
 
         <footer className="mt-10 border-t border-white/10 pt-6 text-center text-xs text-slate-500">
-          © {new Date().getFullYear()} CineWave — Un regard indépendant sur le
+          © {new Date().getFullYear()} Histyra — Un regard indépendant sur le
           cinéma.
         </footer>
       </div>

@@ -8,7 +8,7 @@ import { prisma } from "@/lib/prisma";
 export const metadata: Metadata = {
   title: "Films",
   description:
-    "Explore les films sur CineWave : affiches, synopsis, années de sortie et découvertes cinéma.",
+    "Explore les films sur Histyra : affiches, synopsis, années de sortie et découvertes cinéma.",
 };
 
 type FilmsPageProps = {
@@ -138,7 +138,7 @@ async function FilmsContent({ searchParams }: FilmsPageProps) {
     <div className="mx-auto min-h-screen max-w-7xl px-5 py-10 md:px-8">
       <section className="rounded-3xl border border-white/10 bg-gradient-to-br from-slate-900 via-indigo-950 to-rose-950 p-7 sm:p-12">
         <p className="text-sm font-bold uppercase tracking-[0.2em] text-rose-400">
-          Le catalogue CineWave
+          Le catalogue Histyra
         </p>
 
         <h1 className="mt-3 text-4xl font-black sm:text-5xl">

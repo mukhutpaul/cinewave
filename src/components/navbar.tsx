@@ -172,18 +172,18 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-white/10 bg-[#080b14]/95 backdrop-blur-xl">
-      <div className="cine-container navbar min-h-16 px-0">
+      <div className="His-container navbar min-h-16 px-0">
         {/* Logo */}
         <div className="navbar-start">
           <Link
             href="/"
             onClick={closeMenus}
             className="flex items-center gap-2 text-2xl font-black tracking-tight"
-            aria-label="CineWave - Accueil"
+            aria-label="Histyra - Accueil"
           >
             <Clapperboard className="text-rose-500" size={28} />
             <span>
-              Cine<span className="text-rose-500">Wave</span>
+              His<span className="text-rose-500">tyra</span>
             </span>
           </Link>
         </div>
@@ -318,7 +318,7 @@ export default function Navbar() {
 
       {/* Navigation mobile */}
       {mobileOpen && (
-        <div className="cine-container border-t border-white/10 pb-4 pt-3 lg:hidden">
+        <div className="His-container border-t border-white/10 pb-4 pt-3 lg:hidden">
           <nav aria-label="Navigation mobile">
             <ul className="menu w-full gap-1 p-0">
               {renderLinks(publicLinks)}

@@ -319,7 +319,7 @@ export default function ArticleManager({
         <div>
           <h2 className="text-xl font-semibold">Gestion des actualités</h2>
           <p className="mt-1 text-sm text-gray-400">
-            Créez, modifiez et organisez vos articles CineWave.
+            Créez, modifiez et organisez vos articles Histyra.
           </p>
         </div>
 

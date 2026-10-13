@@ -6,7 +6,7 @@ import { prisma } from "@/lib/prisma";
 export const metadata: Metadata = {
   title: "Séries",
   description:
-    "Découvre les séries disponibles sur CineWave.",
+    "Découvre les séries disponibles sur Histyra.",
 };
 
 export default async function SeriesPage() {
@@ -38,7 +38,7 @@ export default async function SeriesPage() {
   return (
     <div className="mx-auto min-h-screen max-w-7xl px-5 py-12 md:px-8">
       <p className="text-sm font-bold uppercase tracking-widest text-rose-400">
-        Le catalogue CineWave
+        Le catalogue Histyra
       </p>
 
       <h1 className="mt-3 text-4xl font-black sm:text-5xl">

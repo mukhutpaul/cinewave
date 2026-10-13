@@ -7,7 +7,7 @@ import FilmsManager from "./FilmsManager";
 
 
 export const metadata = {
-  title: "Films et séries | Administration CineWave",
+  title: "Films et séries | Administration Histyra",
 };
 
 export default async function AdminFilmsPage() {
@@ -47,7 +47,7 @@ export default async function AdminFilmsPage() {
     <main className="space-y-6 p-4 sm:p-6 lg:p-8">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="text-sm font-medium text-primary">CINEWAVE / ADMIN</p>
+          <p className="text-sm font-medium text-primary">Histyra / ADMIN</p>
           <h1 className="mt-1 text-2xl font-bold tracking-tight sm:text-3xl">
             Films et séries
           </h1>

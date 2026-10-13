@@ -123,7 +123,7 @@ export default function ProfileForm({ user }: ProfileFormProps) {
           </div>
 
           <h2 className="max-w-full break-words text-xl font-bold">
-            {name.trim() || "Utilisateur CineWave"}
+            {name.trim() || "Utilisateur Histyra"}
           </h2>
 
           <p className="max-w-full break-all text-sm text-slate-400">

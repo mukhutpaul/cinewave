@@ -266,7 +266,7 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
           <div className="mt-6 flex flex-wrap items-end justify-between gap-4">
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.25em] text-rose-400">
-                CineWave · Administration
+                Histyra · Administration
               </p>
 
               <h1 className="mt-2 text-3xl font-black sm:text-4xl">
@@ -600,7 +600,7 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
         </section>
 
         <footer className="mt-8 border-t border-white/10 pt-5 text-center text-xs text-slate-500">
-          CineWave · Administration des utilisateurs
+          Histyra · Administration des utilisateurs
         </footer>
       </div>
     </main>

@@ -4,16 +4,16 @@ import { connection } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
-  title: "Actualités cinéma et séries — CineWave",
+  title: "Actualités cinéma et séries — Histyra",
   description:
     "Retrouve les actualités du cinéma, les nouvelles sorties, les annonces et les dossiers sur les films et les séries.",
   openGraph: {
-    title: "Actualités cinéma et séries — CineWave",
+    title: "Actualités cinéma et séries — Histyra",
     description:
-      "Les nouvelles du grand écran, les dossiers et les découvertes de la rédaction CineWave.",
+      "Les nouvelles du grand écran, les dossiers et les découvertes de la rédaction Histyra.",
     type: "website",
     locale: "fr_FR",
-    siteName: "CineWave",
+    siteName: "Histyra",
   },
 };
 
@@ -66,7 +66,7 @@ export default async function ActualitesPage() {
           </Link>
 
           <p className="mt-8 text-sm font-bold uppercase tracking-[0.25em] text-sky-400">
-            Le magazine CineWave
+            Le magazine Histyra
           </p>
 
           <h1 className="mt-4 max-w-3xl text-4xl font-black tracking-tight sm:text-5xl md:text-6xl">
