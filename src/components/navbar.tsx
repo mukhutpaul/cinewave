@@ -57,31 +57,31 @@ const dashboardLinks: NavLink[] = [
 
 const editorLinks: NavLink[] = [
   {
-    href: "/dashboard/films",
+    href: "/dashboard/admin/films",
     label: "Gestion des films",
     icon: Film,
     roles: ["EDITOR", "ADMIN"],
   },
   {
-    href: "/dashboard/series",
+    href: "/dashboard/admin/series",
     label: "Gestion des séries",
     icon: Tv,
     roles: ["EDITOR", "ADMIN"],
   },
   {
-    href: "/dashboard/critiques",
+    href: "/dashboard/admin/critiques",
     label: "Gestion des critiques",
     icon: Star,
     roles: ["EDITOR", "ADMIN"],
   },
   {
-    href: "/dashboard/actualites",
+    href: "/dashboard/admin/articles",
     label: "Gestion des actualités",
     icon: Newspaper,
     roles: ["EDITOR", "ADMIN"],
   },
   {
-    href: "/dashboard/categories",
+    href: "/dashboard/admin/categories",
     label: "Catégories",
     icon: FolderOpen,
     roles: ["EDITOR", "ADMIN"],
@@ -90,19 +90,19 @@ const editorLinks: NavLink[] = [
 
 const adminLinks: NavLink[] = [
   {
-    href: "/dashboard/utilisateurs",
+    href: "/dashboard/admin/utilisateurs",
     label: "Utilisateurs",
     icon: Users,
     roles: ["ADMIN"],
   },
   {
-    href: "/dashboard/administration",
+    href: "/dashboard/admin",
     label: "Administration",
     icon: ShieldCheck,
     roles: ["ADMIN"],
   },
   {
-    href: "/dashboard/parametres",
+    href: "/dashboard/admin/parametres",
     label: "Paramètres",
     icon: Settings,
     roles: ["ADMIN"],
