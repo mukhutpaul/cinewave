@@ -40,6 +40,7 @@ export const auth = betterAuth({
   trustedOrigins: [
     "https://histyra.com",
     "https://www.histyra.com",
+    "https://histyra-1ruv7kn95-mukhutpauls-projects.vercel.app",
     "http://localhost:3000",
   ],
 });
