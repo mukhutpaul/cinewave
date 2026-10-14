@@ -1,9 +1,7 @@
 
 import "dotenv/config";
-import { auth } from "../src/lib/auth";
-import { prisma } from "@/lib/prisma";
-
-
+import { hashPassword } from "better-auth/crypto";
+import { prisma } from "./seed-client";
 
 async function main() {
   const name = process.env.SUPERADMIN_NAME?.trim();
@@ -16,9 +14,9 @@ async function main() {
     );
   }
 
-  if (password.length < 12) {
+  if (password.length < 12 || password.length > 128) {
     throw new Error(
-      "Le mot de passe du Superadministrateur doit contenir au moins 12 caractères."
+      "Le mot de passe doit contenir entre 12 et 128 caractères."
     );
   }
 
@@ -29,47 +27,49 @@ async function main() {
   });
 
   if (!user) {
-    // Better Auth crée le compte et gère le hachage du mot de passe.
-    await auth.api.signUpEmail({
-      body: {
+    const hashedPassword = await hashPassword(password);
+
+    user = await prisma.user.create({
+      data: {
+        id: crypto.randomUUID(),
         name,
         email,
-        password,
+        emailVerified: true,
+        role: "ADMIN",
+        banned: false,
+        accounts: {
+          create: {
+            id: crypto.randomUUID(),
+            accountId: email,
+            providerId: "credential",
+            password: hashedPassword,
+          },
+        },
       },
     });
 
-    user = await prisma.user.findUnique({
-      where: { email },
+    console.log("Compte Superadministrateur créé.");
+  } else {
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        name,
+        role: "ADMIN",
+        emailVerified: true,
+        banned: false,
+      },
     });
 
-    if (!user) {
-      throw new Error(
-        "Better Auth n'a pas créé le compte. Vérifiez sa configuration."
-      );
-    }
-
-    console.log("Compte utilisateur créé.");
-  } else {
-    console.log("Compte existant détecté.");
+    console.log("Compte existant promu Superadministrateur.");
+    console.log("Son mot de passe n'a pas été modifié.");
   }
-
-  // Le rôle est attribué exclusivement côté serveur.
-  await prisma.user.update({
-    where: { id: user.id },
-    data: {
-      role: "ADMIN",
-      emailVerified: true,
-      banned: false,
-    },
-  });
 
   console.log("----------------------------------------");
   console.log("Superadministrateur initialisé avec succès.");
-  console.log(`Nom       : ${name}`);
-  console.log(`E-mail    : ${email}`);
-  console.log("Rôle      : ADMIN");
+  console.log(`Nom    : ${user.name}`);
+  console.log(`E-mail : ${user.email}`);
+  console.log(`Rôle   : ${user.role}`);
   console.log("----------------------------------------");
-  console.log("Le mot de passe n'est pas affiché.");
 }
 
 main()
