@@ -38,6 +38,8 @@ export const auth = betterAuth({
   },
 
   trustedOrigins: [
+    "https://histyra.com",
+    "https://www.histyra.com",
     "http://localhost:3000",
   ],
 });
