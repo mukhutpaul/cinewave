@@ -5,56 +5,14 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = "force-dynamic";
+
 type PageProps = {
   params: Promise<{ slug: string }>;
 };
 
-export async function generateMetadata({
-  params,
-}: PageProps): Promise<Metadata> {
-  const { slug } = await params;
-
-  const article = await prisma.article.findFirst({
-    where: {
-      slug,
-      status: "PUBLISHED",
-      publishedAt: { lte: new Date() },
-    },
-    select: {
-      title: true,
-      excerpt: true,
-      coverImageUrl: true,
-      seoTitle: true,
-      seoDescription: true,
-    },
-  });
-
-  if (!article) {
-    return { title: "Article introuvable | Histyra" };
-  }
-
-  return {
-    title: article.seoTitle || article.title,
-    description:
-      article.seoDescription ||
-      article.excerpt ||
-      `Lisez cet article sur Histyra : ${article.title}`,
-    openGraph: {
-      title: article.seoTitle || article.title,
-      description:
-        article.seoDescription || article.excerpt || article.title,
-      images: article.coverImageUrl
-        ? [article.coverImageUrl]
-        : [],
-      type: "article",
-    },
-  };
-}
-
-export default async function ArticlePage({ params }: PageProps) {
-  const { slug } = await params;
-
-  const article = await prisma.article.findFirst({
+async function getArticle(slug: string) {
+  return prisma.article.findFirst({
     where: {
       slug,
       status: "PUBLISHED",
@@ -69,8 +27,48 @@ export default async function ArticlePage({ params }: PageProps) {
       },
     },
   });
+}
 
-  if (!article) notFound();
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const article = await getArticle(slug);
+
+  if (!article) {
+    return {
+      title: "Article introuvable | Histyra",
+      robots: { index: false, follow: false },
+    };
+  }
+
+  const title = article.seoTitle || article.title;
+  const description =
+    article.seoDescription ||
+    article.excerpt ||
+    `Lisez cet article sur Histyra : ${article.title}`;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: "article",
+      ...(article.coverImageUrl
+        ? { images: [article.coverImageUrl] }
+        : {}),
+    },
+  };
+}
+
+export default async function ArticlePage({ params }: PageProps) {
+  const { slug } = await params;
+  const article = await getArticle(slug);
+
+  if (!article) {
+    notFound();
+  }
 
   const date = article.publishedAt
     ? new Intl.DateTimeFormat("fr-FR", {
@@ -94,6 +92,7 @@ export default async function ArticlePage({ params }: PageProps) {
           <Link href="/actualites" className="hover:text-primary">
             Actualités
           </Link>
+
           {article.category && (
             <>
               <span className="mx-2">/</span>
