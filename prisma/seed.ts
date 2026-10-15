@@ -1,5 +1,6 @@
 
 import "dotenv/config";
+import { randomUUID } from "node:crypto";
 import { hashPassword } from "better-auth/crypto";
 import { prisma } from "./seed-client";
 
@@ -10,7 +11,7 @@ async function main() {
 
   if (!name || !email || !password) {
     throw new Error(
-      "Configurez SUPERADMIN_NAME, SUPERADMIN_EMAIL et SUPERADMIN_PASSWORD dans votre fichier .env."
+      "Configurez SUPERADMIN_NAME, SUPERADMIN_EMAIL et SUPERADMIN_PASSWORD."
     );
   }
 
@@ -20,61 +21,78 @@ async function main() {
     );
   }
 
-  console.log("Initialisation du compte Superadministrateur...");
+  console.log("Initialisation du superadministrateur...");
 
-  let user = await prisma.user.findUnique({
-    where: { email },
+  const hashedPassword = await hashPassword(password);
+
+  await prisma.$transaction(async (tx) => {
+    let user = await tx.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
+      user = await tx.user.create({
+        data: {
+          id: randomUUID(),
+          name,
+          email,
+          emailVerified: true,
+          role: "ADMIN",
+          banned: false,
+        },
+      });
+      console.log("Utilisateur administrateur créé.");
+    } else {
+      user = await tx.user.update({
+        where: { id: user.id },
+        data: {
+          name,
+          role: "ADMIN",
+          emailVerified: true,
+          banned: false,
+        },
+      });
+      console.log("Utilisateur existant mis à jour.");
+    }
+
+    const account = await tx.account.findFirst({
+      where: {
+        userId: user.id,
+        providerId: "credential",
+      },
+    });
+
+    if (account) {
+      await tx.account.update({
+        where: { id: account.id },
+        data: {
+          password: hashedPassword,
+        },
+      });
+      console.log("Mot de passe du compte credential réinitialisé.");
+    } else {
+      await tx.account.create({
+        data: {
+          id: randomUUID(),
+          accountId: user.id,
+          providerId: "credential",
+          userId: user.id,
+          password: hashedPassword,
+        },
+      });
+      console.log("Compte credential créé.");
+    }
+
+    console.log(`Administrateur : ${user.email}`);
+    console.log(`Rôle : ${user.role}`);
   });
 
-  if (!user) {
-    const hashedPassword = await hashPassword(password);
-
-    user = await prisma.user.create({
-      data: {
-        id: crypto.randomUUID(),
-        name,
-        email,
-        emailVerified: true,
-        role: "ADMIN",
-        banned: false,
-        accounts: {
-          create: {
-            id: crypto.randomUUID(),
-            accountId: email,
-            providerId: "credential",
-            password: hashedPassword,
-          },
-        },
-      },
-    });
-
-    console.log("Compte Superadministrateur créé.");
-  } else {
-    await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        name,
-        role: "ADMIN",
-        emailVerified: true,
-        banned: false,
-      },
-    });
-
-    console.log("Compte existant promu Superadministrateur.");
-    console.log("Son mot de passe n'a pas été modifié.");
-  }
-
-  console.log("----------------------------------------");
-  console.log("Superadministrateur initialisé avec succès.");
-  console.log(`Nom    : ${user.name}`);
-  console.log(`E-mail : ${user.email}`);
-  console.log(`Rôle   : ${user.role}`);
-  console.log("----------------------------------------");
+  console.log("Initialisation terminée.");
 }
 
 main()
   .catch((error) => {
-    console.error("Échec du seed Superadministrateur :", error);
+    console.error("Échec du seed administrateur :", error);
     process.exitCode = 1;
   })
   .finally(async () => {
