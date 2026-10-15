@@ -62,12 +62,12 @@ const editorLinks: NavLink[] = [
     icon: Film,
     roles: ["EDITOR", "ADMIN"],
   },
-  {
-    href: "/dashboard/admin/series",
-    label: "Gestion des séries",
-    icon: Tv,
-    roles: ["EDITOR", "ADMIN"],
-  },
+//   {
+//     href: "/dashboard/admin/series",
+//     label: "Gestion des séries",
+//     icon: Tv,
+//     roles: ["EDITOR", "ADMIN"],
+//   },
   {
     href: "/dashboard/admin/critiques",
     label: "Gestion des critiques",
