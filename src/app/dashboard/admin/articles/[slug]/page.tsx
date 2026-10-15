@@ -3,12 +3,17 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
+import { connection } from "next/server";
 import { prisma } from "@/lib/prisma";
-
-export const dynamic = "force-dynamic";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
+};
+
+export const metadata: Metadata = {
+  title: "Actualités | Histyra",
+  description: "Découvrez les actualités et articles publiés sur Histyra.",
 };
 
 async function getArticle(slug: string) {
@@ -16,7 +21,9 @@ async function getArticle(slug: string) {
     where: {
       slug,
       status: "PUBLISHED",
-      publishedAt: { lte: new Date() },
+      publishedAt: {
+        lte: new Date(),
+      },
     },
     include: {
       category: {
@@ -29,41 +36,29 @@ async function getArticle(slug: string) {
   });
 }
 
-export async function generateMetadata({
-  params,
-}: PageProps): Promise<Metadata> {
-  const { slug } = await params;
-  const article = await getArticle(slug);
+function ArticleLoading() {
+  return (
+    <main className="min-h-screen bg-base-100">
+      <div className="mx-auto max-w-4xl animate-pulse px-4 py-10 sm:px-6 lg:py-16">
+        <div className="mb-8 h-4 w-40 rounded bg-base-300" />
+        <div className="h-12 w-4/5 rounded bg-base-300" />
+        <div className="mt-5 h-5 w-full rounded bg-base-200" />
+        <div className="mt-8 aspect-video rounded-2xl bg-base-200" />
 
-  if (!article) {
-    return {
-      title: "Article introuvable | Histyra",
-      robots: { index: false, follow: false },
-    };
-  }
-
-  const title = article.seoTitle || article.title;
-  const description =
-    article.seoDescription ||
-    article.excerpt ||
-    `Lisez cet article sur Histyra : ${article.title}`;
-
-  return {
-    title,
-    description,
-    openGraph: {
-      title,
-      description,
-      type: "article",
-      ...(article.coverImageUrl
-        ? { images: [article.coverImageUrl] }
-        : {}),
-    },
-  };
+        <div className="mt-10 space-y-3">
+          <div className="h-4 rounded bg-base-200" />
+          <div className="h-4 rounded bg-base-200" />
+          <div className="h-4 w-3/4 rounded bg-base-200" />
+        </div>
+      </div>
+    </main>
+  );
 }
 
-export default async function ArticlePage({ params }: PageProps) {
-  const { slug } = await params;
+async function ArticleContent({ slug }: { slug: string }) {
+  // Les données dépendantes de la requête sont chargées à l'exécution.
+  await connection();
+
   const article = await getArticle(slug);
 
   if (!article) {
@@ -88,7 +83,9 @@ export default async function ArticlePage({ params }: PageProps) {
           <Link href="/" className="hover:text-primary">
             Accueil
           </Link>
+
           <span className="mx-2">/</span>
+
           <Link href="/actualites" className="hover:text-primary">
             Actualités
           </Link>
@@ -118,9 +115,8 @@ export default async function ArticlePage({ params }: PageProps) {
         )}
 
         <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-base-content/60">
-          {article.authorName && (
-            <span>Par {article.authorName}</span>
-          )}
+          {article.authorName && <span>Par {article.authorName}</span>}
+
           {date && <time>{date}</time>}
         </div>
 
@@ -158,5 +154,20 @@ export default async function ArticlePage({ params }: PageProps) {
         </div>
       </div>
     </main>
+  );
+}
+
+async function ArticlePageContent({ params }: PageProps) {
+  // Important : params est résolu à l'intérieur de Suspense.
+  const { slug } = await params;
+
+  return <ArticleContent slug={slug} />;
+}
+
+export default function ArticlePage({ params }: PageProps) {
+  return (
+    <Suspense fallback={<ArticleLoading />}>
+      <ArticlePageContent params={params} />
+    </Suspense>
   );
 }
