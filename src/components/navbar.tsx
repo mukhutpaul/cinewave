@@ -1,6 +1,8 @@
 
 "use client";
 
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import {
   Film,
@@ -20,14 +22,7 @@ import {
   ShieldCheck,
   Clapperboard,
 } from "lucide-react";
-import { useLocale, useTranslations } from "next-intl";
 import { useSession, signOut } from "@/lib/auth-client";
-import {
-  Link,
-  usePathname,
-  useRouter,
-} from "@/i18n/navigation";
-import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 type UserRole = "USER" | "EDITOR" | "ADMIN";
 
@@ -39,22 +34,22 @@ type NavLink = {
 };
 
 const publicLinks: NavLink[] = [
-  { href: "/films", label: "films", icon: Film },
-  { href: "/series", label: "series", icon: Tv },
-  { href: "/critiques", label: "reviews", icon: Star },
-  { href: "/actualites", label: "news", icon: Newspaper },
+  { href: "/films", label: "Films", icon: Film },
+  { href: "/series", label: "Séries", icon: Tv },
+  { href: "/critiques", label: "Critiques", icon: Star },
+  { href: "/actualites", label: "Actualités", icon: Newspaper },
 ];
 
 const dashboardLinks: NavLink[] = [
   {
     href: "/dashboard",
-    label: "dashboard",
+    label: "Dashboard",
     icon: LayoutDashboard,
     roles: ["USER", "EDITOR", "ADMIN"],
   },
   {
     href: "/dashboard/profil",
-    label: "profile",
+    label: "Mon profil",
     icon: UserRound,
     roles: ["USER", "EDITOR", "ADMIN"],
   },
@@ -63,25 +58,31 @@ const dashboardLinks: NavLink[] = [
 const editorLinks: NavLink[] = [
   {
     href: "/dashboard/admin/films",
-    label: "manageFilms",
+    label: "Gestion des films",
     icon: Film,
     roles: ["EDITOR", "ADMIN"],
   },
+//   {
+//     href: "/dashboard/admin/series",
+//     label: "Gestion des séries",
+//     icon: Tv,
+//     roles: ["EDITOR", "ADMIN"],
+//   },
   {
     href: "/dashboard/admin/critiques",
-    label: "manageReviews",
+    label: "Gestion des critiques",
     icon: Star,
     roles: ["EDITOR", "ADMIN"],
   },
   {
     href: "/dashboard/admin/articles",
-    label: "manageNews",
+    label: "Gestion des actualités",
     icon: Newspaper,
     roles: ["EDITOR", "ADMIN"],
   },
   {
     href: "/dashboard/admin/categories",
-    label: "categories",
+    label: "Catégories",
     icon: FolderOpen,
     roles: ["EDITOR", "ADMIN"],
   },
@@ -90,19 +91,19 @@ const editorLinks: NavLink[] = [
 const adminLinks: NavLink[] = [
   {
     href: "/dashboard/admin/utilisateurs",
-    label: "users",
+    label: "Utilisateurs",
     icon: Users,
     roles: ["ADMIN"],
   },
   {
     href: "/dashboard/admin",
-    label: "administration",
+    label: "Administration",
     icon: ShieldCheck,
     roles: ["ADMIN"],
   },
   {
     href: "/dashboard/admin/parametres",
-    label: "settings",
+    label: "Paramètres",
     icon: Settings,
     roles: ["ADMIN"],
   },
@@ -110,20 +111,13 @@ const adminLinks: NavLink[] = [
 
 export default function Navbar() {
   const pathname = usePathname();
-  const router = useRouter();
-  const locale = useLocale();
-  const t = useTranslations("Nav");
-
   const { data: session, isPending } = useSession();
-
   const [mobileOpen, setMobileOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
 
   const user = session?.user;
-  const role =
-    (user as { role?: UserRole } | undefined)?.role ?? "USER";
-
+  const role = (user as { role?: UserRole } | undefined)?.role ?? "USER";
   const isAuthenticated = Boolean(user);
 
   const canAccess = (link: NavLink) =>
@@ -137,23 +131,23 @@ export default function Navbar() {
   const visibleEditorLinks = editorLinks.filter(canAccess);
   const visibleAdminLinks = adminLinks.filter(canAccess);
 
-  function closeMenus() {
-    setMobileOpen(false);
-    setAccountOpen(false);
-  }
-
   async function handleSignOut() {
     setLoggingOut(true);
 
     try {
       await signOut();
-      closeMenus();
-      router.replace("/", { locale });
-      router.refresh();
+      setAccountOpen(false);
+      setMobileOpen(false);
+      window.location.href = "/";
     } catch (error) {
       console.error("Erreur lors de la déconnexion :", error);
       setLoggingOut(false);
     }
+  }
+
+  function closeMenus() {
+    setMobileOpen(false);
+    setAccountOpen(false);
   }
 
   function renderLinks(links: NavLink[]) {
@@ -170,36 +164,10 @@ export default function Navbar() {
           }`}
         >
           <Icon size={17} />
-          <span>{t(label)}</span>
+          <span>{label}</span>
         </Link>
       </li>
     ));
-  }
-
-  function renderAccountLinks() {
-    return (
-      <>
-        {renderLinks(visibleDashboardLinks)}
-
-        {visibleEditorLinks.length > 0 && (
-          <>
-            <li className="menu-title">
-              <span>{t("contentManagement")}</span>
-            </li>
-            {renderLinks(visibleEditorLinks)}
-          </>
-        )}
-
-        {visibleAdminLinks.length > 0 && (
-          <>
-            <li className="menu-title">
-              <span>{t("administration")}</span>
-            </li>
-            {renderLinks(visibleAdminLinks)}
-          </>
-        )}
-      </>
-    );
   }
 
   return (
@@ -211,7 +179,7 @@ export default function Navbar() {
             href="/"
             onClick={closeMenus}
             className="flex items-center gap-2 text-2xl font-black tracking-tight"
-            aria-label="HISTYRA - Accueil"
+            aria-label="Histyra - Accueil"
           >
             <Clapperboard className="text-rose-500" size={28} />
             <span>
@@ -232,18 +200,13 @@ export default function Navbar() {
 
         {/* Actions desktop */}
         <div className="navbar-end gap-2">
-          <div className="hidden sm:block">
-            <LanguageSwitcher />
-          </div>
-
           {!isPending && !isAuthenticated && (
             <div className="hidden items-center gap-2 sm:flex">
               <Link
                 href="/connexion"
                 className="btn btn-ghost btn-sm"
               >
-                <LogIn size={16} />
-                {t("login")}
+                Connexion
               </Link>
 
               <Link
@@ -251,16 +214,13 @@ export default function Navbar() {
                 className="btn btn-error btn-sm text-white"
               >
                 <UserPlus size={16} />
-                {t("register")}
+                Rejoindre
               </Link>
             </div>
           )}
 
           {isPending && (
-            <span
-              className="loading loading-spinner loading-sm text-rose-500"
-              aria-label="Chargement"
-            />
+            <span className="loading loading-spinner loading-sm text-rose-500" />
           )}
 
           {!isPending && isAuthenticated && (
@@ -286,7 +246,7 @@ export default function Navbar() {
                 </div>
 
                 <span className="max-w-28 truncate">
-                  {user?.name || t("myAccount")}
+                  {user?.name || "Mon compte"}
                 </span>
               </button>
 
@@ -296,13 +256,32 @@ export default function Navbar() {
                   className="menu absolute right-0 top-full z-50 mt-2 w-64 rounded-box border border-white/10 bg-[#101522] p-2 shadow-2xl"
                 >
                   <li className="menu-title">
-                    <span className="truncate">{user?.email}</span>
+                    <span className="truncate">
+                      {user?.email}
+                    </span>
                     <span className="badge badge-sm badge-error text-white">
                       {role}
                     </span>
                   </li>
 
-                  {renderAccountLinks()}
+                  {renderLinks(visibleDashboardLinks)}
+                  {visibleEditorLinks.length > 0 && (
+                    <>
+                      <li className="menu-title">
+                        <span>Gestion des contenus</span>
+                      </li>
+                      {renderLinks(visibleEditorLinks)}
+                    </>
+                  )}
+
+                  {visibleAdminLinks.length > 0 && (
+                    <>
+                      <li className="menu-title">
+                        <span>Administration</span>
+                      </li>
+                      {renderLinks(visibleAdminLinks)}
+                    </>
+                  )}
 
                   <li>
                     <button
@@ -316,9 +295,7 @@ export default function Navbar() {
                       ) : (
                         <LogOut size={17} />
                       )}
-                      {loggingOut
-                        ? t("loggingOut")
-                        : t("logout")}
+                      {loggingOut ? "Déconnexion..." : "Se déconnecter"}
                     </button>
                   </li>
                 </ul>
@@ -330,9 +307,7 @@ export default function Navbar() {
           <button
             type="button"
             className="btn btn-square btn-ghost lg:hidden"
-            aria-label={
-              mobileOpen ? "Fermer le menu" : "Ouvrir le menu"
-            }
+            aria-label={mobileOpen ? "Fermer le menu" : "Ouvrir le menu"}
             aria-expanded={mobileOpen}
             onClick={() => setMobileOpen((open) => !open)}
           >
@@ -344,10 +319,6 @@ export default function Navbar() {
       {/* Navigation mobile */}
       {mobileOpen && (
         <div className="His-container border-t border-white/10 pb-4 pt-3 lg:hidden">
-          <div className="mb-3 px-1">
-            <LanguageSwitcher />
-          </div>
-
           <nav aria-label="Navigation mobile">
             <ul className="menu w-full gap-1 p-0">
               {renderLinks(publicLinks)}
@@ -365,9 +336,7 @@ export default function Navbar() {
                   <div className="avatar placeholder">
                     <div className="w-10 rounded-full bg-rose-500/20 text-rose-400">
                       <span>
-                        {(user?.name || "U")
-                          .charAt(0)
-                          .toUpperCase()}
+                        {(user?.name || "U").charAt(0).toUpperCase()}
                       </span>
                     </div>
                   </div>
@@ -386,7 +355,25 @@ export default function Navbar() {
                 </div>
 
                 <ul className="menu w-full gap-1 p-0">
-                  {renderAccountLinks()}
+                  {renderLinks(visibleDashboardLinks)}
+
+                  {visibleEditorLinks.length > 0 && (
+                    <>
+                      <li className="menu-title">
+                        <span>Gestion des contenus</span>
+                      </li>
+                      {renderLinks(visibleEditorLinks)}
+                    </>
+                  )}
+
+                  {visibleAdminLinks.length > 0 && (
+                    <>
+                      <li className="menu-title">
+                        <span>Administration</span>
+                      </li>
+                      {renderLinks(visibleAdminLinks)}
+                    </>
+                  )}
 
                   <li>
                     <button
@@ -396,9 +383,7 @@ export default function Navbar() {
                       className="text-error"
                     >
                       <LogOut size={17} />
-                      {loggingOut
-                        ? t("loggingOut")
-                        : t("logout")}
+                      {loggingOut ? "Déconnexion..." : "Se déconnecter"}
                     </button>
                   </li>
                 </ul>
@@ -411,7 +396,7 @@ export default function Navbar() {
                   className="btn btn-outline btn-sm"
                 >
                   <LogIn size={16} />
-                  {t("login")}
+                  Connexion
                 </Link>
 
                 <Link
@@ -420,7 +405,7 @@ export default function Navbar() {
                   className="btn btn-error btn-sm text-white"
                 >
                   <UserPlus size={16} />
-                  {t("register")}
+                  Rejoindre
                 </Link>
               </div>
             )}

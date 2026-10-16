@@ -1,13 +1,11 @@
 
 import { connection } from "next/server";
-import { getTranslations } from "next-intl/server";
-import { Link } from "@/i18n/navigation";
+import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 
 export default async function HomeContent() {
   await connection();
 
-  const t = await getTranslations("Home");
   const now = new Date();
 
   const publicationFilter = {
@@ -90,30 +88,30 @@ export default async function HomeContent() {
 
         <div className="max-w-3xl">
           <div className="badge badge-outline mb-6 border-rose-400/50 px-4 py-4 text-rose-300">
-            {t("tagline")}
+            {'Le meilleur du cinéma, au même endroit'}
           </div>
 
           <h1 className="text-4xl font-black leading-tight tracking-tight sm:text-6xl lg:text-7xl">
-            {t("heroLine1")}
+            {'Découvrez des films'}
             <span className="block text-rose-400">
-              {t("heroLine2")}
+              {'et des histoires inoubliables'}
             </span>
           </h1>
 
           <p className="mt-6 max-w-xl text-base leading-8 text-slate-300 sm:text-lg">
-            {t("heroDescription")}
+            {'Explorez les films, les séries, les critiques et les actualités qui font vivre le monde du cinéma.'}
           </p>
 
           <div className="mt-8 flex flex-wrap gap-3">
             <Link href="/films" className="btn btn-error text-white">
-              {t("exploreFilms")}
+              {'Explorer les films'}
             </Link>
 
             <Link
               href="/critiques"
               className="btn border-white/20 bg-white/5 text-white hover:bg-white/10"
             >
-              {t("readReviews")}
+              {'Lire les critiques'}
             </Link>
           </div>
 
@@ -122,21 +120,21 @@ export default async function HomeContent() {
               <p className="text-2xl font-bold text-white">
                 {movies.length}
               </p>
-              <p>{t("filmsAndSeries")}</p>
+              <p>{'Films et séries'}</p>
             </div>
 
             <div>
               <p className="text-2xl font-bold text-white">
                 {reviews.length}
               </p>
-              <p>{t("recentReviewsCount")}</p>
+              <p>{'Critiques récentes'}</p>
             </div>
 
             <div>
               <p className="text-2xl font-bold text-white">
                 {articles.length}
               </p>
-              <p>{t("recentArticlesCount")}</p>
+              <p>{'Actualités récentes'}</p>
             </div>
           </div>
         </div>
@@ -145,10 +143,10 @@ export default async function HomeContent() {
       {/* Emplacement publicitaire */}
       <div
         className="mx-auto my-8 flex min-h-[90px] max-w-5xl items-center justify-center px-5"
-        aria-label={t("adSpace")}
+        aria-label={'Espace publicitaire'}
       >
         <span className="text-xs text-slate-600">
-          {t("adSpace")}
+          {'Espace publicitaire'}
         </span>
       </div>
 
@@ -157,11 +155,11 @@ export default async function HomeContent() {
         <section className="mx-auto max-w-7xl px-5 py-12 md:px-8">
           <div className="mb-6">
             <p className="text-sm font-bold uppercase tracking-[0.2em] text-rose-400">
-              {t("discover")}
+              {'À découvrir'}
             </p>
 
             <h2 className="mt-2 text-3xl font-bold">
-              {t("featured")}
+              {'À la une'}
             </h2>
           </div>
 
@@ -171,7 +169,7 @@ export default async function HomeContent() {
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={featured.posterUrl}
-                  alt={t("posterAlt", { title: featured.title })}
+                  alt={`Affiche de ${featured.title}`}
                   loading="lazy"
                   className="max-h-[420px] rounded-xl object-contain shadow-2xl"
                 />
@@ -187,7 +185,7 @@ export default async function HomeContent() {
 
             <div className="flex flex-col justify-center p-7 sm:p-10">
               <div className="badge badge-error mb-4 w-fit">
-                {t("ourSelection")}
+                {'Notre sélection'}
               </div>
 
               <h3 className="text-3xl font-black sm:text-4xl">
@@ -195,14 +193,14 @@ export default async function HomeContent() {
               </h3>
 
               <p className="mt-3 text-sm text-slate-400">
-                {featured.releaseYear ?? t("unknownYear")}
+                {featured.releaseYear ?? "Année inconnue"}
                 {" · "}
                 {featured.type === "SERIES"
-                  ? t("series")
-                  : t("film")}
+                  ? "Série"
+                  : "Film"}
                 {"duration" in featured &&
                 typeof featured.duration === "number"
-                  ? ` · ${featured.duration} ${t("minutes")}`
+                  ? ` · ${featured.duration} ${'min'}`
                   : ""}
               </p>
 
@@ -216,7 +214,7 @@ export default async function HomeContent() {
                 href={`/films/${featured.slug}`}
                 className="btn btn-error mt-7 w-fit text-white"
               >
-                {t("discoverMore")}
+                {'Découvrir'}
               </Link>
             </div>
           </div>
@@ -228,16 +226,16 @@ export default async function HomeContent() {
         <div className="mb-7 flex items-end justify-between gap-4">
           <div>
             <p className="text-sm font-bold uppercase tracking-widest text-rose-400">
-              {t("onScreen")}
+              {"À l'affiche"}
             </p>
 
             <h2 className="mt-2 text-3xl font-bold">
-              {t("latestFilms")}
+              {'Films récents'}
             </h2>
           </div>
 
           <Link href="/films" className="link link-hover text-rose-400">
-            {t("seeAll")} →
+            {'Voir tout'} →
           </Link>
         </div>
 
@@ -246,11 +244,11 @@ export default async function HomeContent() {
             <p className="text-4xl">🍿</p>
 
             <h3 className="mt-4 text-xl font-bold">
-              {t("cinemaPreparing")}
+              {'Le cinéma se prépare'}
             </h3>
 
             <p className="mt-2 text-slate-400">
-              {t("firstFilmsSoon")}
+              {'Les premiers films seront bientôt disponibles.'}
             </p>
           </div>
         ) : (
@@ -266,7 +264,7 @@ export default async function HomeContent() {
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={movie.posterUrl}
-                      alt={t("posterAlt", { title: movie.title })}
+                      alt={`Affiche de ${movie.title}`}
                       loading="lazy"
                       className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                     />
@@ -285,11 +283,11 @@ export default async function HomeContent() {
                 </h3>
 
                 <p className="mt-1 text-xs text-slate-400">
-                  {movie.releaseYear ?? t("unknownYear")}
+                  {movie.releaseYear ?? "Année inconnue"}
                   {" · "}
                   {movie.type === "SERIES"
-                    ? t("series")
-                    : t("film")}
+                    ? "Série"
+                    : "Film"}
                 </p>
               </Link>
             ))}
@@ -302,11 +300,11 @@ export default async function HomeContent() {
         <div className="mb-7 flex items-end justify-between gap-4">
           <div>
             <p className="text-sm font-bold uppercase tracking-widest text-rose-400">
-              {t("editorialView")}
+              {'Le regard éditorial'}
             </p>
 
             <h2 className="mt-2 text-3xl font-bold">
-              {t("latestReviews")}
+              {'Dernières critiques'}
             </h2>
           </div>
 
@@ -314,13 +312,13 @@ export default async function HomeContent() {
             href="/critiques"
             className="link link-hover text-rose-400"
           >
-            {t("allReviews")} →
+            {'Toutes les critiques'} →
           </Link>
         </div>
 
         {reviews.length === 0 ? (
           <p className="rounded-2xl bg-white/[0.03] p-6 text-slate-400">
-            {t("firstReviewsSoon")}
+            {'Les premières critiques seront bientôt disponibles.'}
           </p>
         ) : (
           <div className="grid gap-5 md:grid-cols-3">
@@ -345,7 +343,7 @@ export default async function HomeContent() {
                   )}
 
                   <p className="mt-3 text-xs text-slate-400">
-                    {t("byAuthor", { author: review.authorName })}
+                    {`Par ${review.authorName}`}
                   </p>
 
                   <div className="card-actions mt-3">
@@ -353,7 +351,7 @@ export default async function HomeContent() {
                       href={`/critiques/${review.slug}`}
                       className="btn btn-outline btn-sm border-rose-500 text-rose-400"
                     >
-                      {t("readReview")}
+                      {'Lire la critique'}
                     </Link>
                   </div>
                 </div>
@@ -366,10 +364,10 @@ export default async function HomeContent() {
       {/* Publicité entre les sections éditoriales */}
       <div
         className="mx-auto my-8 flex min-h-[90px] max-w-5xl items-center justify-center px-5"
-        aria-label={t("adSpace")}
+        aria-label={'Espace publicitaire'}
       >
         <span className="text-xs text-slate-600">
-          {t("adSpace")}
+          {'Espace publicitaire'}
         </span>
       </div>
 
@@ -378,11 +376,11 @@ export default async function HomeContent() {
         <div className="mb-7 flex items-end justify-between gap-4">
           <div>
             <p className="text-sm font-bold uppercase tracking-widest text-rose-400">
-              {t("magazine")}
+              {'Le magazine'}
             </p>
 
             <h2 className="mt-2 text-3xl font-bold">
-              {t("latestNews")}
+              {'Dernières actualités'}
             </h2>
           </div>
 
@@ -390,13 +388,13 @@ export default async function HomeContent() {
             href="/actualites"
             className="link link-hover text-rose-400"
           >
-            {t("readAll")} →
+            {'Tout lire'} →
           </Link>
         </div>
 
         {articles.length === 0 ? (
           <p className="rounded-2xl bg-white/[0.03] p-6 text-slate-400">
-            {t("firstNewsSoon")}
+            {'Les premières actualités seront bientôt disponibles.'}
           </p>
         ) : (
           <div className="grid gap-5 md:grid-cols-3">
@@ -409,9 +407,7 @@ export default async function HomeContent() {
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={article.coverImageUrl}
-                    alt={t("articleImageAlt", {
-                      title: article.title,
-                    })}
+                    alt={`Illustration de l’article ${article.title}`}
                     loading="lazy"
                     className="h-48 w-full object-cover"
                   />
@@ -427,7 +423,7 @@ export default async function HomeContent() {
                   )}
 
                   <p className="text-xs text-slate-400">
-                    {t("byAuthor", { author: article.authorName })}
+                    {`Par ${article.authorName}`}
                   </p>
 
                   <div className="card-actions mt-3">
@@ -435,7 +431,7 @@ export default async function HomeContent() {
                       href={`/actualites/${article.slug}`}
                       className="btn btn-ghost btn-sm text-rose-400"
                     >
-                      {t("readArticle")} →
+                      {"Lire l’article"} →
                     </Link>
                   </div>
                 </div>
@@ -448,22 +444,22 @@ export default async function HomeContent() {
       {/* Appel à l'inscription */}
       <section className="mx-5 mb-12 rounded-3xl border border-white/10 bg-gradient-to-br from-indigo-950 to-rose-950 px-6 py-12 sm:px-12 md:mx-auto md:max-w-7xl">
         <p className="text-sm font-bold uppercase tracking-widest text-rose-300">
-          {t("welcome")}
+          {'Bienvenue sur Histyra'}
         </p>
 
         <h2 className="mt-3 max-w-2xl text-3xl font-black sm:text-4xl">
-          {t("everyFilmStory")}
+          {'Chaque film raconte une histoire.'}
         </h2>
 
         <p className="mt-4 max-w-xl leading-7 text-slate-300">
-          {t("joinDescription")}
+          {'Rejoignez Histyra pour découvrir le cinéma autrement.'}
         </p>
 
         <Link
           href="/inscription"
           className="btn btn-error mt-7 text-white"
         >
-          {t("joinHistyra")}
+          {'Rejoindre Histyra'}
         </Link>
       </section>
     </div>
