@@ -1,12 +1,13 @@
 
-import Link from "next/link";
 import { connection } from "next/server";
+import { getTranslations } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 import { prisma } from "@/lib/prisma";
 
 export default async function HomeContent() {
-  // Évite le prérendu de données dépendant de l'heure actuelle.
   await connection();
 
+  const t = await getTranslations("Home");
   const now = new Date();
 
   const publicationFilter = {
@@ -89,44 +90,53 @@ export default async function HomeContent() {
 
         <div className="max-w-3xl">
           <div className="badge badge-outline mb-6 border-rose-400/50 px-4 py-4 text-rose-300">
-            Le magazine cinéma
+            {t("tagline")}
           </div>
 
           <h1 className="text-4xl font-black leading-tight tracking-tight sm:text-6xl lg:text-7xl">
-            Le cinéma mérite
-            <span className="block text-rose-400">un autre regard.</span>
+            {t("heroLine1")}
+            <span className="block text-rose-400">
+              {t("heroLine2")}
+            </span>
           </h1>
 
           <p className="mt-6 max-w-xl text-base leading-8 text-slate-300 sm:text-lg">
-            Explore les films, découvre de nouvelles séries et plonge dans
-            des critiques indépendantes et des histoires qui méritent d’être
-            racontées.
+            {t("heroDescription")}
           </p>
 
           <div className="mt-8 flex flex-wrap gap-3">
             <Link href="/films" className="btn btn-error text-white">
-              Explorer les films
+              {t("exploreFilms")}
             </Link>
+
             <Link
               href="/critiques"
               className="btn border-white/20 bg-white/5 text-white hover:bg-white/10"
             >
-              Lire les critiques
+              {t("readReviews")}
             </Link>
           </div>
 
           <div className="mt-10 flex flex-wrap gap-8 text-sm text-slate-400">
             <div>
-              <p className="text-2xl font-bold text-white">{movies.length}</p>
-              <p>Films et séries</p>
+              <p className="text-2xl font-bold text-white">
+                {movies.length}
+              </p>
+              <p>{t("filmsAndSeries")}</p>
             </div>
+
             <div>
-              <p className="text-2xl font-bold text-white">{reviews.length}</p>
-              <p>Critiques récentes</p>
+              <p className="text-2xl font-bold text-white">
+                {reviews.length}
+              </p>
+              <p>{t("recentReviewsCount")}</p>
             </div>
+
             <div>
-              <p className="text-2xl font-bold text-white">{articles.length}</p>
-              <p>Articles récents</p>
+              <p className="text-2xl font-bold text-white">
+                {articles.length}
+              </p>
+              <p>{t("recentArticlesCount")}</p>
             </div>
           </div>
         </div>
@@ -135,9 +145,11 @@ export default async function HomeContent() {
       {/* Emplacement publicitaire */}
       <div
         className="mx-auto my-8 flex min-h-[90px] max-w-5xl items-center justify-center px-5"
-        aria-label="Espace publicitaire"
+        aria-label={t("adSpace")}
       >
-        <span className="text-xs text-slate-600">Espace publicitaire</span>
+        <span className="text-xs text-slate-600">
+          {t("adSpace")}
+        </span>
       </div>
 
       {/* Film à la une */}
@@ -145,9 +157,12 @@ export default async function HomeContent() {
         <section className="mx-auto max-w-7xl px-5 py-12 md:px-8">
           <div className="mb-6">
             <p className="text-sm font-bold uppercase tracking-[0.2em] text-rose-400">
-              À découvrir
+              {t("discover")}
             </p>
-            <h2 className="mt-2 text-3xl font-bold">À la une</h2>
+
+            <h2 className="mt-2 text-3xl font-bold">
+              {t("featured")}
+            </h2>
           </div>
 
           <div className="grid overflow-hidden rounded-3xl border border-white/10 bg-slate-900 md:grid-cols-2">
@@ -156,41 +171,52 @@ export default async function HomeContent() {
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={featured.posterUrl}
-                  alt={`Affiche de ${featured.title}`}
+                  alt={t("posterAlt", { title: featured.title })}
                   loading="lazy"
                   className="max-h-[420px] rounded-xl object-contain shadow-2xl"
                 />
               ) : (
                 <div className="text-center">
                   <span className="text-6xl">🎬</span>
-                  <p className="mt-4 text-xl font-bold">{featured.title}</p>
+                  <p className="mt-4 text-xl font-bold">
+                    {featured.title}
+                  </p>
                 </div>
               )}
             </div>
 
             <div className="flex flex-col justify-center p-7 sm:p-10">
               <div className="badge badge-error mb-4 w-fit">
-                Notre sélection
+                {t("ourSelection")}
               </div>
+
               <h3 className="text-3xl font-black sm:text-4xl">
                 {featured.title}
               </h3>
+
               <p className="mt-3 text-sm text-slate-400">
-                {featured.releaseYear ?? "Année inconnue"}
+                {featured.releaseYear ?? t("unknownYear")}
                 {" · "}
-                {featured.type === "SERIES" ? "Série" : "Film"}
-                {"duration" in featured && featured.duration
-                  ? ` · ${featured.duration} min`
+                {featured.type === "SERIES"
+                  ? t("series")
+                  : t("film")}
+                {"duration" in featured &&
+                typeof featured.duration === "number"
+                  ? ` · ${featured.duration} ${t("minutes")}`
                   : ""}
               </p>
-              <p className="mt-5 whitespace-pre-line leading-7 text-slate-300">
-                {featured.synopsis}
-              </p>
+
+              {featured.synopsis && (
+                <p className="mt-5 whitespace-pre-line leading-7 text-slate-300">
+                  {featured.synopsis}
+                </p>
+              )}
+
               <Link
                 href={`/films/${featured.slug}`}
                 className="btn btn-error mt-7 w-fit text-white"
               >
-                Découvrir
+                {t("discoverMore")}
               </Link>
             </div>
           </div>
@@ -202,23 +228,29 @@ export default async function HomeContent() {
         <div className="mb-7 flex items-end justify-between gap-4">
           <div>
             <p className="text-sm font-bold uppercase tracking-widest text-rose-400">
-              À l’affiche
+              {t("onScreen")}
             </p>
-            <h2 className="mt-2 text-3xl font-bold">Films récents</h2>
+
+            <h2 className="mt-2 text-3xl font-bold">
+              {t("latestFilms")}
+            </h2>
           </div>
+
           <Link href="/films" className="link link-hover text-rose-400">
-            Tout voir →
+            {t("seeAll")} →
           </Link>
         </div>
 
         {movies.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-white/15 p-10 text-center">
             <p className="text-4xl">🍿</p>
+
             <h3 className="mt-4 text-xl font-bold">
-              Le grand écran se prépare
+              {t("cinemaPreparing")}
             </h3>
+
             <p className="mt-2 text-slate-400">
-              Les premiers films seront bientôt disponibles.
+              {t("firstFilmsSoon")}
             </p>
           </div>
         ) : (
@@ -234,7 +266,7 @@ export default async function HomeContent() {
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={movie.posterUrl}
-                      alt={`Affiche de ${movie.title}`}
+                      alt={t("posterAlt", { title: movie.title })}
                       loading="lazy"
                       className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                     />
@@ -247,13 +279,17 @@ export default async function HomeContent() {
                     </div>
                   )}
                 </div>
+
                 <h3 className="mt-3 font-bold transition group-hover:text-rose-400">
                   {movie.title}
                 </h3>
+
                 <p className="mt-1 text-xs text-slate-400">
-                  {movie.releaseYear ?? "Année inconnue"}
+                  {movie.releaseYear ?? t("unknownYear")}
                   {" · "}
-                  {movie.type === "SERIES" ? "Série" : "Film"}
+                  {movie.type === "SERIES"
+                    ? t("series")
+                    : t("film")}
                 </p>
               </Link>
             ))}
@@ -266,18 +302,25 @@ export default async function HomeContent() {
         <div className="mb-7 flex items-end justify-between gap-4">
           <div>
             <p className="text-sm font-bold uppercase tracking-widest text-rose-400">
-              Le regard de la rédaction
+              {t("editorialView")}
             </p>
-            <h2 className="mt-2 text-3xl font-bold">Critiques récentes</h2>
+
+            <h2 className="mt-2 text-3xl font-bold">
+              {t("latestReviews")}
+            </h2>
           </div>
-          <Link href="/critiques" className="link link-hover text-rose-400">
-            Toutes les critiques →
+
+          <Link
+            href="/critiques"
+            className="link link-hover text-rose-400"
+          >
+            {t("allReviews")} →
           </Link>
         </div>
 
         {reviews.length === 0 ? (
           <p className="rounded-2xl bg-white/[0.03] p-6 text-slate-400">
-            Les premières critiques seront bientôt publiées.
+            {t("firstReviewsSoon")}
           </p>
         ) : (
           <div className="grid gap-5 md:grid-cols-3">
@@ -292,19 +335,25 @@ export default async function HomeContent() {
                       {review.movie.title}
                     </p>
                   )}
+
                   <h3 className="card-title">{review.title}</h3>
-                  <p className="line-clamp-3 leading-7 text-slate-300">
-                    {review.excerpt}
-                  </p>
+
+                  {review.excerpt && (
+                    <p className="line-clamp-3 leading-7 text-slate-300">
+                      {review.excerpt}
+                    </p>
+                  )}
+
                   <p className="mt-3 text-xs text-slate-400">
-                    Par {review.authorName}
+                    {t("byAuthor", { author: review.authorName })}
                   </p>
+
                   <div className="card-actions mt-3">
                     <Link
                       href={`/critiques/${review.slug}`}
                       className="btn btn-outline btn-sm border-rose-500 text-rose-400"
                     >
-                      Lire la critique
+                      {t("readReview")}
                     </Link>
                   </div>
                 </div>
@@ -317,9 +366,11 @@ export default async function HomeContent() {
       {/* Publicité entre les sections éditoriales */}
       <div
         className="mx-auto my-8 flex min-h-[90px] max-w-5xl items-center justify-center px-5"
-        aria-label="Espace publicitaire"
+        aria-label={t("adSpace")}
       >
-        <span className="text-xs text-slate-600">Espace publicitaire</span>
+        <span className="text-xs text-slate-600">
+          {t("adSpace")}
+        </span>
       </div>
 
       {/* Actualités */}
@@ -327,20 +378,25 @@ export default async function HomeContent() {
         <div className="mb-7 flex items-end justify-between gap-4">
           <div>
             <p className="text-sm font-bold uppercase tracking-widest text-rose-400">
-              Magazine
+              {t("magazine")}
             </p>
+
             <h2 className="mt-2 text-3xl font-bold">
-              Actualités et dossiers
+              {t("latestNews")}
             </h2>
           </div>
-          <Link href="/actualites" className="link link-hover text-rose-400">
-            Tout lire →
+
+          <Link
+            href="/actualites"
+            className="link link-hover text-rose-400"
+          >
+            {t("readAll")} →
           </Link>
         </div>
 
         {articles.length === 0 ? (
           <p className="rounded-2xl bg-white/[0.03] p-6 text-slate-400">
-            Les premières actualités seront bientôt disponibles.
+            {t("firstNewsSoon")}
           </p>
         ) : (
           <div className="grid gap-5 md:grid-cols-3">
@@ -353,7 +409,9 @@ export default async function HomeContent() {
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={article.coverImageUrl}
-                    alt={`Illustration de ${article.title}`}
+                    alt={t("articleImageAlt", {
+                      title: article.title,
+                    })}
                     loading="lazy"
                     className="h-48 w-full object-cover"
                   />
@@ -361,18 +419,23 @@ export default async function HomeContent() {
 
                 <div className="card-body">
                   <h3 className="card-title">{article.title}</h3>
-                  <p className="line-clamp-3 leading-7 text-slate-300">
-                    {article.excerpt}
-                  </p>
+
+                  {article.excerpt && (
+                    <p className="line-clamp-3 leading-7 text-slate-300">
+                      {article.excerpt}
+                    </p>
+                  )}
+
                   <p className="text-xs text-slate-400">
-                    Par {article.authorName}
+                    {t("byAuthor", { author: article.authorName })}
                   </p>
+
                   <div className="card-actions mt-3">
                     <Link
                       href={`/actualites/${article.slug}`}
                       className="btn btn-ghost btn-sm text-rose-400"
                     >
-                      Lire l’article →
+                      {t("readArticle")} →
                     </Link>
                   </div>
                 </div>
@@ -385,17 +448,22 @@ export default async function HomeContent() {
       {/* Appel à l'inscription */}
       <section className="mx-5 mb-12 rounded-3xl border border-white/10 bg-gradient-to-br from-indigo-950 to-rose-950 px-6 py-12 sm:px-12 md:mx-auto md:max-w-7xl">
         <p className="text-sm font-bold uppercase tracking-widest text-rose-300">
-          Bienvenue chez Histyra
+          {t("welcome")}
         </p>
+
         <h2 className="mt-3 max-w-2xl text-3xl font-black sm:text-4xl">
-          Chaque film mérite qu’on raconte son histoire.
+          {t("everyFilmStory")}
         </h2>
+
         <p className="mt-4 max-w-xl leading-7 text-slate-300">
-          Rejoins notre univers pour explorer le cinéma, découvrir des pépites
-          et partager ta passion du grand écran.
+          {t("joinDescription")}
         </p>
-        <Link href="/inscription" className="btn btn-error mt-7 text-white">
-          Rejoindre Histyra
+
+        <Link
+          href="/inscription"
+          className="btn btn-error mt-7 text-white"
+        >
+          {t("joinHistyra")}
         </Link>
       </section>
     </div>
