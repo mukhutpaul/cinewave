@@ -1,4 +1,3 @@
-
 import type { Metadata } from "next";
 import Link from "next/link";
 
@@ -125,15 +124,14 @@ export default function ConfidentialitePage() {
           <section id="responsable" className={sectionClass}>
             <h2 className={headingClass}>1. Responsable du site</h2>
             <p className={paragraphClass}>
-              HISTYRA est un site consacré au cinéma, aux films, aux séries,
-              aux critiques et aux actualités du secteur audiovisuel.
-              Le responsable du site est la personne physique ou morale qui
-              exploite HISTYRA.
+              HISTYRA est un site consacré au cinéma, aux films, aux séries, aux
+              critiques et aux actualités du secteur audiovisuel. Le responsable
+              du site est la personne physique ou morale qui exploite HISTYRA.
             </p>
             <p className={paragraphClass}>
-              Pour toute question relative à la confidentialité ou au
-              traitement des données personnelles, vous pouvez nous contacter
-              à l’adresse suivante :{" "}
+              Pour toute question relative à la confidentialité ou au traitement
+              des données personnelles, vous pouvez nous contacter à l’adresse
+              suivante :{" "}
               <a
                 href="mailto:contact@histyra.com"
                 className="font-medium text-rose-300 underline decoration-rose-300/30 underline-offset-4 hover:text-rose-200"
@@ -152,22 +150,19 @@ export default function ConfidentialitePage() {
             </p>
             <ul className={listClass}>
               <li>
-                <strong className="text-white">Données de compte :</strong>{" "}
-                nom ou pseudonyme, adresse e-mail et informations nécessaires
-                à la gestion de votre compte, si cette fonctionnalité est
-                proposée.
+                <strong className="text-white">Données de compte :</strong> nom
+                ou pseudonyme, adresse e-mail et informations nécessaires à la
+                gestion de votre compte, si cette fonctionnalité est proposée.
               </li>
               <li>
                 <strong className="text-white">
                   Données de communication :
                 </strong>{" "}
-                informations que vous transmettez lorsque vous nous contactez
-                ou envoyez un message.
+                informations que vous transmettez lorsque vous nous contactez ou
+                envoyez un message.
               </li>
               <li>
-                <strong className="text-white">
-                  Données de navigation :
-                </strong>{" "}
+                <strong className="text-white">Données de navigation :</strong>{" "}
                 informations techniques telles que le type de navigateur,
                 l’appareil, les pages consultées et les journaux du serveur,
                 lorsqu’ils sont collectés.
@@ -176,14 +171,14 @@ export default function ConfidentialitePage() {
                 <strong className="text-white">
                   Données de mesure d’audience :
                 </strong>{" "}
-                informations relatives à la fréquentation du site, si un
-                outil de mesure d’audience est utilisé.
+                informations relatives à la fréquentation du site, si un outil
+                de mesure d’audience est utilisé.
               </li>
             </ul>
             <p className={paragraphClass}>
               Nous ne prétendons pas collecter systématiquement toutes ces
-              données. Les informations effectivement recueillies dépendent
-              des fonctionnalités activées et de votre utilisation du site.
+              données. Les informations effectivement recueillies dépendent des
+              fonctionnalités activées et de votre utilisation du site.
             </p>
           </section>
 
@@ -198,8 +193,8 @@ export default function ConfidentialitePage() {
               <li>Répondre aux messages et demandes des visiteurs.</li>
               <li>Améliorer les contenus et l’expérience de navigation.</li>
               <li>
-                Comprendre la fréquentation du site lorsque des outils
-                d’analyse sont utilisés.
+                Comprendre la fréquentation du site lorsque des outils d’analyse
+                sont utilisés.
               </li>
               <li>
                 Afficher et mesurer des annonces publicitaires lorsque ces
@@ -217,9 +212,9 @@ export default function ConfidentialitePage() {
               4. Cookies et technologies similaires
             </h2>
             <p className={paragraphClass}>
-              Des cookies ou technologies similaires peuvent être utilisés
-              pour assurer certaines fonctions du site, mémoriser des
-              préférences, sécuriser une session ou mesurer l’audience.
+              Des cookies ou technologies similaires peuvent être utilisés pour
+              assurer certaines fonctions du site, mémoriser des préférences,
+              sécuriser une session ou mesurer l’audience.
             </p>
             <p className={paragraphClass}>
               Certains cookies sont nécessaires au fonctionnement du site.
@@ -228,23 +223,21 @@ export default function ConfidentialitePage() {
               consentement préalable selon la réglementation applicable.
             </p>
             <p className={paragraphClass}>
-              Vous pouvez également gérer les cookies dans les paramètres
-              de votre navigateur. Le blocage de certains cookies peut
-              toutefois empêcher le fonctionnement de certaines fonctionnalités.
+              Vous pouvez également gérer les cookies dans les paramètres de
+              votre navigateur. Le blocage de certains cookies peut toutefois
+              empêcher le fonctionnement de certaines fonctionnalités.
             </p>
           </section>
 
           <section id="publicite" className={sectionClass}>
-            <h2 className={headingClass}>
-              5. Publicité et Google AdSense
-            </h2>
+            <h2 className={headingClass}>5. Publicité et Google AdSense</h2>
             <p className={paragraphClass}>
               HISTYRA peut utiliser des services publicitaires tiers, notamment
-              Google AdSense, si cette solution est activée sur le site.
-              Ces services peuvent utiliser des cookies ou des technologies
+              Google AdSense, si cette solution est activée sur le site. Ces
+              services peuvent utiliser des cookies ou des technologies
               similaires pour afficher des annonces, limiter leur répétition,
-              mesurer leur efficacité ou personnaliser la publicité lorsque
-              cela est autorisé.
+              mesurer leur efficacité ou personnaliser la publicité lorsque cela
+              est autorisé.
             </p>
             <p className={paragraphClass}>
               Selon votre région, votre consentement et les paramètres
@@ -252,8 +245,8 @@ export default function ConfidentialitePage() {
               peuvent être proposées.
             </p>
             <p className={paragraphClass}>
-              Pour en savoir plus sur la manière dont Google traite les
-              données, consultez la{" "}
+              Pour en savoir plus sur la manière dont Google traite les données,
+              consultez la{" "}
               <a
                 href="https://policies.google.com/privacy"
                 target="_blank"
@@ -266,9 +259,9 @@ export default function ConfidentialitePage() {
             </p>
             <p className={paragraphClass}>
               Si HISTYRA utilise des annonces Google, les paramètres de
-              personnalisation publicitaire et les choix de consentement
-              doivent être configurés conformément aux exigences applicables.
-              Cette politique ne remplace pas les mécanismes de consentement
+              personnalisation publicitaire et les choix de consentement doivent
+              être configurés conformément aux exigences applicables. Cette
+              politique ne remplace pas les mécanismes de consentement
               nécessaires.
             </p>
           </section>
@@ -279,15 +272,14 @@ export default function ConfidentialitePage() {
             </h2>
             <p className={paragraphClass}>
               HISTYRA peut proposer des liens vers des sites externes ou
-              intégrer des contenus provenant de services tiers, par exemple
-              des vidéos hébergées sur une plateforme externe.
+              intégrer des contenus provenant de services tiers, par exemple des
+              vidéos hébergées sur une plateforme externe.
             </p>
             <p className={paragraphClass}>
               Lorsque vous consultez ces contenus, les fournisseurs concernés
-              peuvent recevoir certaines informations techniques ou déposer
-              des cookies selon leur fonctionnement et vos paramètres.
-              Leurs propres politiques de confidentialité s’appliquent à
-              leurs services.
+              peuvent recevoir certaines informations techniques ou déposer des
+              cookies selon leur fonctionnement et vos paramètres. Leurs propres
+              politiques de confidentialité s’appliquent à leurs services.
             </p>
             <p className={paragraphClass}>
               Nous vous invitons à consulter les politiques des services
@@ -307,8 +299,8 @@ export default function ConfidentialitePage() {
             <p className={paragraphClass}>
               Toutefois, aucun système de transmission ou de stockage
               électronique ne peut garantir une sécurité absolue. Nous
-              travaillons à limiter les risques et à maintenir la sécurité
-              des informations traitées.
+              travaillons à limiter les risques et à maintenir la sécurité des
+              informations traitées.
             </p>
           </section>
 
@@ -331,20 +323,20 @@ export default function ConfidentialitePage() {
             <h2 className={headingClass}>9. Vos droits</h2>
             <p className={paragraphClass}>
               Selon la législation applicable à votre situation, vous pouvez
-              disposer de droits concernant vos données personnelles,
-              notamment :
+              disposer de droits concernant vos données personnelles, notamment
+              :
             </p>
             <ul className={listClass}>
               <li>Demander l’accès à vos données personnelles.</li>
               <li>Demander la rectification d’informations inexactes.</li>
               <li>Demander la suppression de certaines données.</li>
               <li>
-                Vous opposer à certains traitements ou en demander la
-                limitation lorsque les conditions légales sont réunies.
+                Vous opposer à certains traitements ou en demander la limitation
+                lorsque les conditions légales sont réunies.
               </li>
               <li>
-                Retirer votre consentement lorsque le traitement repose
-                sur celui-ci.
+                Retirer votre consentement lorsque le traitement repose sur
+                celui-ci.
               </li>
             </ul>
             <p className={paragraphClass}>
@@ -364,10 +356,9 @@ export default function ConfidentialitePage() {
           <section id="mineurs" className={sectionClass}>
             <h2 className={headingClass}>10. Protection des mineurs</h2>
             <p className={paragraphClass}>
-              HISTYRA est un site consacré aux contenus et actualités du
-              cinéma. Les personnes qui utilisent le site doivent respecter
-              les éventuelles restrictions d’âge applicables aux contenus
-              consultés.
+              HISTYRA est un site consacré aux contenus et actualités du cinéma.
+              Les personnes qui utilisent le site doivent respecter les
+              éventuelles restrictions d’âge applicables aux contenus consultés.
             </p>
             <p className={paragraphClass}>
               Si vous êtes parent ou représentant légal et estimez que des
@@ -384,8 +375,8 @@ export default function ConfidentialitePage() {
             <p className={paragraphClass}>
               Cette politique peut être mise à jour pour tenir compte de
               l’évolution du site, de ses fonctionnalités ou des obligations
-              applicables. La date de dernière mise à jour figurant en haut
-              de cette page permet d’identifier sa version la plus récente.
+              applicables. La date de dernière mise à jour figurant en haut de
+              cette page permet d’identifier sa version la plus récente.
             </p>
             <p className={paragraphClass}>
               Nous vous invitons à consulter régulièrement cette page.
@@ -402,13 +393,12 @@ export default function ConfidentialitePage() {
               de vos données personnelles, vous pouvez contacter l’équipe
               HISTYRA.
             </p>
-            <a
-              href="mailto:contact@histyra.com"
-              className="mt-6 inline-flex items-center gap-2 rounded-xl bg-rose-500 px-5 py-3 font-bold text-white transition hover:bg-rose-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300 focus-visible:ring-offset-2 focus-visible:ring-offset-[#080b14]"
+            <Link
+              href="/contact"
+              className="font-medium text-rose-300 underline decoration-rose-300/30 underline-offset-4 hover:text-rose-200"
             >
-              Nous contacter
-              <span aria-hidden="true">↗</span>
-            </a>
+              Nous Contacter
+            </Link>
           </section>
 
           <div className="border-t border-white/10 pt-8">
