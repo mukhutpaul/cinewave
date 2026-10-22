@@ -34,8 +34,8 @@ type NavLink = {
 };
 
 const publicLinks: NavLink[] = [
-  { href: "/films", label: "Films", icon: Film },
-  { href: "/series", label: "Séries", icon: Tv },
+  { href: "/films", label: "Histoires", icon: Film },
+  // { href: "/series", label: "Séries", icon: Tv },
   { href: "/critiques", label: "Critiques", icon: Star },
   { href: "/actualites", label: "Actualités", icon: Newspaper },
 ];
