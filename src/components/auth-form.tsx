@@ -111,7 +111,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
           </Link>
 
           <p className="mt-3 text-sm text-slate-400">
-            Le cinéma mérite un autre regard.
+            L'histoire mérite un autre regard.
           </p>
         </div>
 
