@@ -68,7 +68,7 @@ async function ActualitesContent() {
       { publishedAt: "desc" },
       { createdAt: "desc" },
     ],
-    take: 12,
+    take: 20,
     select: {
       id: true,
       title: true,

@@ -17,7 +17,7 @@ export default async function HomeContent() {
     prisma.article.findMany({
       where: publicationFilter,
       orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
-      take: 6,
+      take: 15,
       select: {
         id: true,
         title: true,
