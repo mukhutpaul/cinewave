@@ -1,3 +1,4 @@
+
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import Script from "next/script";
@@ -8,17 +9,16 @@ import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import { Toaster } from "@/components/ui/Toaster";
 
+const ADSENSE_CLIENT = "ca-pub-1679933365806572";
+
 export const metadata: Metadata = {
   title: {
     default: "Histyra — Le magazine cinéma",
     template: "%s | Histyra",
   },
-
   description:
     "Découvre des critiques indépendantes, des analyses, des actualités et des recommandations de films et séries sur Histyra.",
-
   applicationName: "Histyra",
-
   openGraph: {
     title: "Histyra — Le magazine cinéma",
     description:
@@ -27,7 +27,6 @@ export const metadata: Metadata = {
     locale: "fr_FR",
     siteName: "Histyra",
   },
-
   robots: {
     index: true,
     follow: true,
@@ -41,15 +40,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr" data-theme="dark">
-      <head>
+      <body className="min-h-screen bg-[#080b14] text-white antialiased">
         <Script
           id="google-adsense"
-          strategy="beforeInteractive"
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1679933365806572"
+          async
+          strategy="afterInteractive"
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT}`}
           crossOrigin="anonymous"
         />
-      </head>
-      <body className="min-h-screen bg-[#080b14] text-white antialiased">
+
         <Suspense fallback={<div className="min-h-16" aria-hidden="true" />}>
           <Navbar />
         </Suspense>
@@ -58,7 +57,6 @@ export default function RootLayout({
 
         <Footer />
 
-        {/* Notifications globales Histyra */}
         <Toaster />
       </body>
     </html>
