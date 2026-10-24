@@ -1,12 +1,14 @@
 
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import Script from "next/script";
 
 import "./globals.css";
 
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import { Toaster } from "@/components/ui/Toaster";
+
 
 export const metadata: Metadata = {
   title: {
@@ -42,6 +44,15 @@ export default function RootLayout({
   return (
     <html lang="fr" data-theme="dark">
       <body className="min-h-screen bg-[#080b14] text-white antialiased">
+
+       <Script
+          id="google-adsense"
+          async
+          strategy="afterInteractive"
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1679933365806572"
+          crossOrigin="anonymous"
+        />
+
         <Suspense
           fallback={
             <div
