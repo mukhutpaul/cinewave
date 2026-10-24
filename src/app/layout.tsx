@@ -1,13 +1,15 @@
 
+
+
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import Script from "next/script";
 
 import "./globals.css";
 
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import { Toaster } from "@/components/ui/Toaster";
+
 
 const ADSENSE_CLIENT = "ca-pub-1679933365806572";
 
@@ -40,16 +42,18 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr" data-theme="dark">
-      <body className="min-h-screen bg-[#080b14] text-white antialiased">
-        <Script
-          id="google-adsense"
+      <head>
+        <script
           async
-          strategy="afterInteractive"
           src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT}`}
           crossOrigin="anonymous"
         />
+      </head>
 
-        <Suspense fallback={<div className="min-h-16" aria-hidden="true" />}>
+      <body className="min-h-screen bg-[#080b14] text-white antialiased">
+        <Suspense
+          fallback={<div className="min-h-16" aria-hidden="true" />}
+        >
           <Navbar />
         </Suspense>
 
